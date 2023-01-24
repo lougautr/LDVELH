@@ -1,0 +1,71 @@
+package demo;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
+import java.util.Iterator;
+
+import java.util.HashMap;
+import java.util.ArrayList;
+
+public class Section{
+	
+	public static void main(String[] args) {
+		
+		HashMap<String , String> Sect = new HashMap<String , String>();
+
+        JSONParser parser = new JSONParser();
+  
+
+        try (Reader reader = new FileReader("./files/fotw.json")) {
+
+            JSONObject jsonObject = (JSONObject) parser.parse(reader);
+            JSONObject sections = (JSONObject) jsonObject.get("sections");
+           
+
+            //String name = (String) jsonObject.get("sections");
+            //System.out.println(sections.get("1"));
+			
+			for (  Object key: sections.keySet() ){
+				
+				/**Numero Section**/
+				
+				String keyStr = (String)key;
+				
+				//System.out.println(keyStr);
+				
+				
+				JSONObject SectObject = (JSONObject) sections.get(keyStr);
+				
+				
+				/**Texte de la Section**/
+				String textValue = (String) SectObject.get("text");		
+				//System.out.println(textValue);				
+				
+				
+				/**Choice**/
+				
+				JSONArray choice = (JSONArray) SectObject.get("choices");
+				System.out.println(choice);
+				
+				
+				
+				Sect.put(keyStr,textValue);
+				
+				}
+			
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+		
+}
+		
+	}

@@ -1,0 +1,99 @@
+package mode;
+
+import org.json.simple.*;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
+import java.util.Iterator;
+import javax.swing.*;
+
+import java.util.HashMap;
+import java.util.ArrayList;
+import java.io.File;
+import java.io.FileWriter;
+import java.lang.Process;
+
+import noeud.*;
+import principal.*;
+
+/*La classe ModifierChargerHistoire permet d'instancier les fonctions pour charger des histoires
+Elle prend en paramètre le fichier d'extension .json, la fenêtre principale, le panel principal, et une condition*/
+
+public class ModifierChargerHistoire{
+  private String file;
+  protected Fenetre principal;
+  protected JPanel panelPrincipal;
+  protected boolean condition;
+
+  public ModifierChargerHistoire(String file, Fenetre principal, JPanel panelPrincipal, boolean condition){
+    JSONParser parser = new JSONParser();
+
+      //La classe lit le fichier passé en argument
+
+      try (Reader reader = new FileReader(file)) {
+        JSONObject jsonObject = (JSONObject) parser.parse(reader);
+        JSONObject sections = (JSONObject) jsonObject.get("sections");
+        principal.setSections(sections);
+        JSONArray intro = (JSONArray) jsonObject.get("intro_sequence");
+
+        //On créé un fichier output.dot vide
+
+        File output = new File("output.dot");
+        FileWriter writer = new FileWriter(output);
+
+        Noeud n = new Noeud(sections, "1");
+        ArrayList<String> listeChoix = new ArrayList<>();
+        listeChoix = n.getChoiceNumber();
+
+        String texteIntro = "";
+        for(int i = 0; i < intro.size(); i++){
+          texteIntro += intro.get(i) + "\n";
+        }
+
+        /*On écrit dans le fichier output.dot, le contenu pour charger le graphe (avec Graphviz), c-a-d tous les noeuds de tous les chapitres
+          et leurs choix (avec des flèches)*/
+
+        writer.write(n.toDot2());
+        writer.flush();
+        writer.close();
+
+        //On utilise les classes Runtime et Process de Java pour écrire des lignes de commandes shell dans un fichier Java
+        //Ici on charge le fichier output.jpg (qui est le graphe) à partir du fichier output.dot
+
+        Runtime rt = Runtime.getRuntime();
+        Process prGraph = rt.exec("dot -Tjpg -o output.jpg output.dot");
+
+        System.out.println(System.getProperty("os.name"));
+        ModeEdition edition = new ModeEdition(texteIntro, principal.getZoneTexteSection(), panelPrincipal, sections, principal);
+        ModeLecture lecture = new ModeLecture(texteIntro, principal.getZoneTexteSection(), panelPrincipal, sections, principal, edition);
+
+        /*La fonction afficherIntro() n'est pas exactement la même si c'est un mode lecture, ou un mode edition
+          En mode edition, il y aura la présence des boutons "plus" et "moins" pour ajouter ou enlever des noeuds, ainsi que les boutons
+          "accueil", "sauvegarder" ... etc*/
+
+        if(condition)
+          edition.afficherIntro(texteIntro);
+        else
+          lecture.afficherIntro(texteIntro);
+        System.out.println(file);
+
+        int exitCode = prGraph.waitFor();
+        System.out.println(exitCode);
+      }
+
+      catch (Exception ex) {
+        ex.printStackTrace();
+      }
+  }
+
+  public void main(){
+
+
+  }
+
+}

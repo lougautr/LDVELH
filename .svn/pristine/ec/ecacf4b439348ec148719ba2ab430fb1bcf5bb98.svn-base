@@ -1,0 +1,123 @@
+\documentclass[12pt]{article}
+
+\usepackage[utf8]{inputenc}%encodage des caractères
+\usepackage[T1]{fontenc}%encodage de la police
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{tikz}
+
+\title{Rapport Conception Logicielle Avancée}
+\author{Antonin Montagne, Lou-Anne Gautherie, Oumoul Kiramy Bah, \\
+Pape Maguette Diongue}
+\date{4 Avril 2022}
+
+\begin{document}
+
+\maketitle
+
+\begin{figure}[h]
+	\begin{center}
+		\includegraphics[scale=0.3]{img/fond.png}	
+	\end{center}
+\end{figure}
+
+\begin{figure}[b]
+	\begin{center}
+		\includegraphics[scale=0.7]{img/unicaen.png}	
+	\end{center}
+\end{figure}
+
+\thispagestyle{empty}
+\setcounter{page}{0}
+\newpage
+
+\tableofcontents
+\newpage
+
+\section{Introduction}
+
+\subsection{Description du projet}
+
+Nous avions pour but de coder en Java, un jeu qui s'intitule "Un livre dont vous êtes le héros". Ce genre de jeu est une progression de lecture en fonction des choix et du résultat des actions du lecteur. \\
+Ce genre de "livre" est très populaire chez les enfants, comme chez les adultes. \\
+La collection de livre "Sherlock Holmes" possède sa propre série de "livre dont vous êtes le héros". \\
+\\
+Quelques exemples de cette série:
+\begin{itemize}
+\item Meurtre au Club Diogène
+\item L'Émeraude de la Rivière Noire 
+\item L'Héritier Disparu
+\end{itemize}
+
+\subsection{Plan du rapport}
+
+Nous évoquerons d'abord quels étaient nos objectifs de départ (\ref{objectifs}), puis nous détaillerons les différentes étapes de la création de notre projet avec les rôles de chacuns (\ref{organisation}). Ensuite nous présenterons les éléments techniques utilisées (\ref{elemtech}) dans notre code, ainsi que l'achitecture de ce projet (\ref{architecture}). Finalement nous présenterons certaines expérimentations (\ref{experimentations}) et terminerons par une courte conclusion (\ref{conclusion}).
+
+\section{Objectifs du projet} \label{objectifs}
+
+Nous voulions développer un editeur de texte, dans lequel le joueur peut créer sa propre histoire dont le lecteur est le héros. Cet editeur se présenterait sous forme de page vierge avec une fenetre qui demanderait à l'utilisateur de taper l'introduction de son histoire, puis les différents chapitres, qui conduisent à d'autres chapitres en fonction des choix choisis. D'un autre côté, le joueur pourrait choisir de charger son histoire précédemment écrite, ou une déjà existante. Une fois l'histoire chargée, le joueur pourra jouer de manière basique en suivant les choix déjà définis, ou d'en créer, ou supprimer en temps réel. Un fois la fenêtre du jeu fermée, le graphique de l'histoire s'afficherait sous format .png.
+
+\section{Fonctionnalités implémentées} \label{organisation}
+
+\subsection{Description des fonctionnalités}
+
+Les possibilités du jeu sont multiples. A partir de l'accueil, il est possible de créer une histoire à partir de rien, c'est-à-dire d'écrire l'intro, ainsi que de créer les choix possibles. On pourra choisir d'enregistrer cette nouvelle histoire dans un fichier json, et de la charger. 
+Il est aussi possible de modifier une histoire déjà écrite en ajoutant (avec le bouton "\textit{plus}") ou supprimant (avec le bouton "\textit{moins}") des chapitres et des choix.
+La dernière fonctionnalité est de charger les histoires .json. L'intro s'affichera ainsi qu'un bouton "\textit{Commencer l'histoire}" qui lancera le premier chapitre avec les choix en dessous. Il suffira juste de cliquer dessus pour accéder au chapitre correspondant.
+En fermant la fenêtre, le graphe de cette histoire s'affichera.
+\\
+\begin{figure}[htpb]
+  \begin{center}
+    \begin{tikzpicture}
+      \node[rectangle, draw, color=violet](1) at (1,3) {$1$};
+      \node[rectangle, draw, color=violet] (273) at (0,1) {$273$};
+      \node[rectangle, draw, color=violet] (160) at (2,0) {$160$};
+      \draw[->, color=red] (1) -- (273);
+      \draw[->, color=red] (273) -- (160);
+      \draw[->, color=red] (1) -- (160);
+    \end{tikzpicture}
+  \end{center}
+  \caption{Graphe du premier chapitre et des premiers choix du fichier \textit{fotw.json}}
+\end{figure}
+
+\subsection{Organisation du projet}
+
+Pour commencer nous avons pris le fichier \textit{fotw.json} qui était joint sur ecampus avec la description du projet. Ce fichier contient une histoire déjà écrite avec 350 chapitres comportant tous des choix. Cette histoire est donc séparée en "sections" allant de 1 à 350. 
+\\
+Kiramy a décidé de ... \textbf{EXPLIQUER COMMENT VOUS AVEZ RÉCUPÉRÉ LES SECTIONS ET ENCHAINER SUR LA CRÉATION DE LA CLASSE NOEUD.JAVA ET SES DIFFÉRENTES FONCTIONS}.
+\\\\
+Après avoir pu accéder à tous les noeuds de ce fichier \textit{fotw.json}, Antonin s'est occupé de la partie interface lorsque nous chargeons ce fichier là.
+\textbf{EXPLIQUER COMMENT TU AS RÉCUPÉRÉ LES SECTIONS ET L'INTRO ET COMMENT TU LES AS AFFICHÉS SOUS FORME DE LISTE ET EXPLIQUER LES DIFFÉRENTES FONCTIONS}
+\\\\
+Lou-Anne a décidé de créer deux boutons sur la page d'accueil, un pour "\textit{Créer une histoire}", et un autre pour "\textit{Charger une histoire}". Le bouton "\textit{Charger une histoire}" affiche la liste des fichiers d'extension .json contenus dans le paquage "\textit{files}". Après avoir choisit le fichier que l'on veut charger, cela affiche l'intro de l'histoire ainsi que tout ce que Antonin a implémenté.
+\\\\
+\textbf{INSÉRER TOUT CE QUE VOUS AVEZ FAIT ICI}
+\\\\
+Pour finir, lorsque la fenêtre se ferme, le graphe de l'histoire s'affiche. Pour ce faire, Lou-Anne a utilisé \textbf{Graphviz}. Grâce aux classes \texttt{File} et \texttt{FileWriter} de Java, elle a fait en sorte de créer un fichier d'extension .dot, de le remplir du codage du graphe (grâce à la fonction \texttt{toDot2()} qui appelle \texttt{toDot()}). La fonction \texttt{toDot2()} écrit le début du fichier avec "disgraph G {..." avec les styles des noeuds et des flèches, ensuite, pour chaque chapitre du fichier et ses choix, la fonction \texttt{toDot()} est appelée. Elle trace des flèches entre chaque choix afin de les lier. Tout ça est donc stocké dans le fichier d'extension .dot. Avec l'aide de la classe \texttt{Process} de Java, nous pouvons donc écrire des lignes de commandes dans un fichier .java. Elle donc fait en sorte d'éxécuter le fichier \textit{output.dot} afin de le compiler en \textit{output.jpg} avec la commande -dot (qui prend en argument un fichier d'extension .dot et renvoie un graphe d'extension .jpg).
+\\\\
+\textbf{EXPLIQUER TOUS LES TESTS UNITAIRES ICI}
+
+\section{Eléments techiniques} \label{elemtech}
+
+\subsection{Paquetages utilisées}
+
+Les paquetages \texttt{File} et \texttt{FileWriter} ont été utilisés dans \textit{ChargerHistoires.java} pour écrire ce qu'on voulait dans le fichier \textit{output.dot}.
+\\\\
+Le paquetage \texttt{Process} est utilisé dans \textit{LaunchGraph.java} et \textit{ChargerHistoires.java} pour écrire des lignes de commandes dans un fichier .java.
+
+\subsection{Algorithmes utilisés}
+
+\subsection{Structures de données utilisées}
+
+\section{Architecture du projet} \label{architecture}
+
+\subsection{Diagramme des classes}
+
+\subsection{Chaînes de traitement}
+
+\section{Expérimentations} \label{experimentations}
+
+\section{Conclusion} \label{conclusion}
+
+\end{document}

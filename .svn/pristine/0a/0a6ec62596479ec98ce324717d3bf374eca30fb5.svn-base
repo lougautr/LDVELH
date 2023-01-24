@@ -1,0 +1,37 @@
+package principal;
+
+import org.json.simple.*;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
+import java.util.Iterator;
+import javax.swing.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.lang.Process;
+
+public class LaunchGraph {
+
+  public static void main(String[] args) {
+
+      JSONParser parser = new JSONParser();
+
+      try (Reader reader = new FileReader("./files/fotw.json")) {
+
+        Runtime rt = Runtime.getRuntime();
+        Process prRmDot = rt.exec("rm output.dot");
+        if(System.getProperty("os.name").equals("Mac OS X")){
+          Process prOpenGraphMac = rt.exec("open output.jpg");
+        }
+        else{
+          Process prOpenGraphLinux = rt.exec("xdg-open output.jpg");
+        }
+    }
+
+    catch (Exception e) {
+        e.printStackTrace();
+    }
+  }
+}

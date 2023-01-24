@@ -1,0 +1,23 @@
+package boutons;
+
+import principal.*;
+import noeud.*;
+import javax.swing.*;
+import java.awt.event.*;
+
+public class ModificationTexte extends JButton{
+
+  protected JTextArea testField1;
+  protected Noeud unNoeud;
+  protected Fenetre principal;
+
+  public ModificationTexte(JTextArea testField1, Noeud unNoeud, Fenetre principal){
+    this.setText("modification texte");
+    this.addMouseListener(new MouseAdapter(){
+    public void mouseClicked(MouseEvent e) {
+      principal.majDicoTexteSections(testField1, Integer.valueOf(unNoeud.getNumber()));
+      }
+    });
+  }
+
+}

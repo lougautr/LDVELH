@@ -1,0 +1,75 @@
+package boutons;
+
+import principal.*;
+import noeud.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.Toolkit;
+import javax.swing.*;
+import java.util.HashMap;
+import org.json.simple.*;
+
+/*Le bouton plus sert a ajouter un choix a une section
+Il prend un argument le  model de la liste des sections, le dictionnaire des sections, celui des textes des sections,
+la fenetre principal, un noeud, la map des choix du noeud, le model de la liste des choix et l'objet section*/
+
+public class Plus extends JButton{
+
+  protected DefaultListModel<String> modelSections;
+  protected DefaultListModel<String> modelChoix;
+  protected HashMap<String, HashMap<String,String>> dicoSections;
+  protected HashMap<Integer, String> dicoTexteSections;
+  protected Fenetre principal;
+  protected Noeud unNoeud;
+  protected HashMap<String,String> mapNoeud;
+  protected JSONObject sections;
+
+  public Plus(DefaultListModel<String> modelSections, HashMap<String, HashMap<String,String>> dicoSections, HashMap<Integer, String> dicoTexteSections, Fenetre principal, Noeud unNoeud, HashMap<String,String> mapNoeud, DefaultListModel<String> modelChoix, JSONObject sections){
+    this.setText("plus");
+    Dimension tailleMoniteur = Toolkit.getDefaultToolkit().getScreenSize();
+    int longueur = tailleMoniteur.width;
+    int hauteur = tailleMoniteur.height;
+    this.addMouseListener(new MouseAdapter(){
+      public void mouseClicked(MouseEvent e) {
+          //On cree une fenetre pop-up pour que l'utilisateur Saisisse le texte du nouveau choix
+          String getMessage = JOptionPane.showInputDialog(principal, "Saisissez le texte de votre choix et mettez le numéro de la section à la fin sans point");
+          //On repere la fin du texte pour avoir le numero de section du nouveau choix
+          String mot = getMessage.substring(getMessage.lastIndexOf(" ")+1, getMessage.length());
+          //On regarde si la section vers la quelle renvoit le choix existe deja ou non
+          if(!modelSections.contains("Sections " + mot)){
+            modelSections.addElement("Sections " + mot);
+            HashMap<String,String> a = new HashMap<>();
+            dicoSections.put("Sections " + mot, a);
+            //On cree une nouvelle JFrame pour que l'utilisateur Saisisse le texte de la nouvelle section
+            JFrame frameSection = new JFrame("frameSection");
+            JPanel panelSection = new JPanel();
+            JButton ferme = new JButton("Cliquer pour valider!");
+            JTextArea texteSection = new JTextArea();
+            ferme.addMouseListener(new MouseAdapter(){
+              public void mouseClicked(MouseEvent e){
+                frameSection.dispose();
+                //On cree une nouvelle section avec le texte de l'utilisateur et on ajoute un objet choix vide a la section
+                Noeud N2 = new Noeud(sections,mot);
+                N2.addNoeud();
+                N2.ajoutTexte(texteSection.getText());
+                //on met a jour le dictionnaire des textes
+                dicoTexteSections.put(Integer.valueOf(N2.getNumber()),texteSection.getText());
+                N2.ajoutChoix();
+              }
+            });
+
+            panelSection.add(texteSection);
+            panelSection.add(ferme);
+            frameSection.setSize(longueur, hauteur);
+            frameSection.getContentPane().add(panelSection);
+            frameSection.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+            frameSection.setVisible(true);
+          }
+          //On ajoute notre nouveau choix au model, a la map des choix du noeud et on mets a jour le dictionnaire des sections
+          modelChoix.addElement(getMessage);
+          mapNoeud.put(mot, getMessage);
+          dicoSections.put("Sections " + unNoeud.getNumber(), mapNoeud);
+        }
+      });
+    }
+  }

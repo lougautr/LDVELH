@@ -1,0 +1,9 @@
+\babel@toc {french}{}
+\beamer@sectionintoc {1}{Introduction}{3}{0}{1}
+\beamer@sectionintoc {2}{Gestion des nœuds}{4}{0}{2}
+\beamer@sectionintoc {3}{Affichage}{5}{0}{3}
+\beamer@subsectionintoc {3}{1}{Première interface}{5}{0}{3}
+\beamer@subsectionintoc {3}{2}{Modes}{7}{0}{3}
+\beamer@sectionintoc {4}{Graphique}{13}{0}{4}
+\beamer@sectionintoc {5}{Tests unitaires}{15}{0}{5}
+\beamer@sectionintoc {6}{Conclusion}{16}{0}{6}

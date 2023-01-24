@@ -1,0 +1,116 @@
+package demo;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
+import java.util.Iterator;
+
+import java.util.HashMap;
+import java.util.ArrayList;
+
+
+
+public class NoeudDemo{
+	
+	public static void main(String[] args) {
+		
+		JSONParser parser = new JSONParser();
+  
+
+        try (Reader reader = new FileReader("./files/fotw.json")) {
+
+            JSONObject jsonObject = (JSONObject) parser.parse(reader);
+            JSONObject sections = (JSONObject) jsonObject.get("sections");
+            
+            
+            Noeud unNoeud = new Noeud(sections,"8");
+            /**Creer un JSON OBject vide qui representera un ensemble de sections**/
+            JSONObject O = new JSONObject ();
+            
+            /*****Creer un Noeud avec cette valeur et l'ajouter à l'ensemble des sections ******/
+            Noeud N = new Noeud(O,"351");
+            N.addNoeud();
+            
+            /**Ajouter un texte au Noeud Creer **/
+            N.ajoutTexte("Ceci est un texte ajouté!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+            
+            N.ajoutChoix("133"," Tenez vous bien Ceci est un choix créé ");
+            /*****Affichage des numero texte et choix*****/
+            
+            System.out.println(N.getNumber());
+
+            System.out.println(N.getTexte());   
+            
+            System.out.println(N.getChoice());    
+      
+            System.out.println(N.getChoiceTexte());    
+           
+            System.out.println(N.getChoiceNumber());    
+            
+            
+            
+            /*Noeud Noeud2 = new Noeud (sections,"213");
+            
+            System.out.println("Numero du noeud : "+unNoeud.getNumber());
+            System.out.println("Texte du noeud : "+unNoeud.getTexte());
+            System.out.println("Choix du noeud : "+unNoeud.getChoice());
+            System.out.println("Texte du choix du noeud : "+unNoeud.getChoiceTexte());
+            System.out.println("Noeuds Suivants : "+unNoeud.getChoiceNumber());
+            System.out.println("Choices:"+unNoeud.choices());
+            System.out.println("choices 213 (Noeud vide):"+ Noeud2.choices());*/
+            
+            
+            //O.put("text","Ceci est un texte ajouté!!!!!!");
+            
+            
+            
+            
+            
+            
+            
+            //System.out.println(N.getTexte());
+            //N.createChoice();
+            //N.ajoutChoix(/*"133"," Tenez vous bien Ceci est un choix créé "*/);
+            
+            
+
+            /*for (  Object key: sections.keySet() ){
+				
+
+				
+				String keyStr = (String)key;
+				
+				System.out.println(keyStr);
+				
+				}*/
+				
+			//Noeud N2 = new Noeud(sections,"351");
+			//System.out.println(unNoeud.getChoice());
+            //System.out.println(N.getTexte());
+            
+            
+
+            
+            } 
+            
+            
+         catch (IOException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+		
+		
+		}
+	
+	
+	
+	
+	
+	
+	}

@@ -1,0 +1,70 @@
+package demo;
+
+import org.json.simple.*;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
+import java.util.Iterator;
+import javax.swing.*;
+
+import java.util.HashMap;
+import java.util.ArrayList;
+import java.io.File;
+import java.io.FileWriter;
+import java.lang.Process;
+
+public class ChargerHistoires{
+  private String file;
+
+  public ChargerHistoires(String file){
+    this.file = file;
+  }
+
+  public void main(Fenetre fenetre){
+
+    JSONParser parser = new JSONParser();
+
+      try (Reader reader = new FileReader(file)) {
+        JSONObject jsonObject = (JSONObject) parser.parse(reader);
+        JSONObject sections = (JSONObject) jsonObject.get("sections");
+        fenetre.sections = sections;
+        JSONArray intro = (JSONArray) jsonObject.get("intro_sequence");
+
+        File output = new File("output.dot");
+        FileWriter writer = new FileWriter(output);
+
+        Noeud n = new Noeud(sections, "1");
+        ArrayList<String> listeChoix = new ArrayList<>();
+        listeChoix = n.getChoiceNumber();
+
+        String texteIntro = "";
+        for(int i = 0; i < intro.size(); i++){
+          texteIntro += intro.get(i) + "\n";
+        }
+
+        writer.write(n.toDot2());
+        writer.flush();
+        writer.close();
+
+        Runtime rt = Runtime.getRuntime();
+        Process prGraph = rt.exec("dot -Tjpg -o output.jpg output.dot");
+
+        System.out.println(System.getProperty("os.name"));
+        fenetre.afficherIntro(texteIntro);
+        System.out.println(file);
+
+        int exitCode = prGraph.waitFor();
+        System.out.println(exitCode);
+      }
+
+      catch (Exception ex) {
+        ex.printStackTrace();
+      }
+  }
+
+}

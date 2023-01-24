@@ -1,0 +1,46 @@
+package boutons;
+
+import principal.*;
+import noeud.*;
+import mode.*;
+import java.awt.event.*;
+import java.awt.*;
+
+import javax.swing.*;
+import org.json.simple.JSONObject;
+
+public class ChargerHistoire extends JButton{
+
+  protected JPanel pannelListHist;
+  protected JPanel pannelPrincipal;
+  protected JPanel pannelPremiersBouton;
+
+  protected JList<String> listeHistoires;
+
+  protected JTextArea zoneTexte;
+
+  protected Fenetre tmp_this;
+
+
+  public ChargerHistoire(JPanel pannelListHist, JPanel pannelPrincipal, JPanel pannelPremiersBouton, JList<String> listeHistoires, JTextArea zoneTexte, Fenetre tmp_this){
+    this.setText("Charger une l'histoire");
+    this.addMouseListener(new MouseAdapter(){
+      public void mouseClicked(MouseEvent e) {
+        zoneTexte.setEditable(false);
+        pannelListHist.setVisible(true);
+        listeHistoires.addMouseListener(new MouseAdapter(){
+          public void mouseClicked(MouseEvent e) {
+            String selected = listeHistoires.getSelectedValue();
+            String chemin = "./files/" + selected;
+            ModifierChargerHistoire hist = new ModifierChargerHistoire(chemin, tmp_this, pannelPrincipal, false);
+            //hist.main()
+            pannelPremiersBouton.setVisible(false);
+            pannelPrincipal.remove(pannelPremiersBouton);
+            pannelListHist.setVisible(false);
+            pannelPrincipal.remove(pannelListHist);
+          }
+        });
+      }
+    });
+  }
+}

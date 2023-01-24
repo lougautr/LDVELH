@@ -1,0 +1,251 @@
+package noeud;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
+import java.util.Iterator;
+
+import java.util.HashMap;
+import java.util.ArrayList;
+
+import java.lang.Integer;
+import javax.json.*;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+
+public class Noeud{
+
+
+	protected JSONObject sections;
+
+	protected String number;
+
+/**********************************************Fonctions de recupération d'un elements à partir d'un fichier json ************************/
+	public Noeud(JSONObject sections , String number)
+
+	{
+
+		this.sections = sections;
+
+		this.number = number ;
+
+		}
+
+	public String getNumber(){
+
+		return this.number;
+
+		}
+	public JSONObject getSection(){
+
+		return this.sections;
+
+		}
+
+/*****Texte du Noeud*****/
+
+	public String getTexte(){
+
+		JSONObject SectObject = (JSONObject) this.sections.get(this.number);
+		String textValue = (String) SectObject.get("text");
+
+		return textValue;
+
+		}
+
+	public JSONArray getChoice(){
+
+		JSONObject SectObject = (JSONObject) this.sections.get(this.number);
+		JSONArray choice = (JSONArray) SectObject.get("choices");
+		return choice;
+
+		}
+/**Texte des choix possibles ***/
+	public ArrayList<String> getChoiceTexte(){
+
+
+				JSONArray choice = this.getChoice();
+
+				ArrayList<String> listeTexte = new ArrayList<>();
+
+				if(choice.size() >=1){
+
+					for (int i=0; i< choice.size();i++)
+					{
+						JSONObject object = (JSONObject) choice.get(i);
+
+						String element =  (String) object.get("text");
+
+						listeTexte.add(element);
+
+					}
+				}
+
+				return listeTexte;
+	}
+/***Numéros des sections futurs  ***/
+	public ArrayList<String> getChoiceNumber(){
+
+
+			JSONArray choice = this.getChoice();
+			ArrayList<String> listeSection = new ArrayList<>();
+			if(choice.size() >=1)
+			{
+				for (int i=0; i< choice.size();i++)
+
+				{
+
+					JSONObject object = (JSONObject) choice.get(i);
+					String numberSection = (String) object.get("section");
+
+					listeSection.add(numberSection);
+
+					}
+				}
+
+			return listeSection;
+		}
+/**Fonction pour recupérer les choix possibles pour un paragraphe sous forme de dictionnaire ***/
+public HashMap<String , String> choices(){
+
+	JSONArray choice =this.getChoice();
+
+	HashMap<String,String> dicoChoix = new HashMap<>();
+
+	if(choice.size() >=1)
+		{
+
+			for (int i=0; i< choice.size();i++){
+
+			JSONObject object = (JSONObject) choice.get(i);
+			String numberSection = (String) object.get("section");
+			String texte =  (String) object.get("text");
+			dicoChoix.put(numberSection, texte);
+			}
+	}
+
+	return dicoChoix;
+
+	}
+
+
+	public String toDot(){
+
+			String graph = "";
+
+	    graph += this.number + " -> {";
+
+	    for(String s: this.getChoiceNumber()){
+
+	      graph += s + " ";
+
+	    }
+	    graph += "};";
+
+	    return graph;
+	  }
+
+	public String toDot2(){
+
+	    String graph = "digraph G { node[shape=squre, color=purple, style = bold]; edge[color=brown, arrowsize=1.5];";
+	    for(int i=1; i<=this.sections.size(); i++){
+
+				Integer ibis = i;
+
+	      graph += new Noeud(this.sections, Integer.toString(ibis)).toDot() + "\n";
+
+	    }
+
+	    graph += "}";
+
+			return graph;
+
+	  }
+
+/**************************************Creation d'Objects json **************************************************/
+
+/*******Ajouter un noeud dans une Section ******/
+	public void addNoeud()
+
+	{
+
+
+		String num = this.getNumber();
+
+		JSONObject obj = this.getSection();
+
+		JSONObject O = new JSONObject();
+
+
+		obj.put(num,O);
+
+
+		}
+
+
+
+/***************Ajouter un texte dans une section ****************/
+	public void ajoutTexte(String texte){
+
+		JSONObject SectObject = (JSONObject) this.sections.get(this.number);
+		SectObject.put("text", texte);
+
+		}
+
+
+/************Ajout des choix(Texte et numero)***************/
+
+	public void ajoutChoix(String futurSection, String texte){
+
+		JSONObject JObj = new JSONObject();
+		JObj.put("section", futurSection);
+		JObj.put("text", texte );
+
+		JSONObject s = (JSONObject) this.sections.get(this.number);
+
+		if (!s.containsKey("choices")){
+
+			JSONArray tabChoice = new JSONArray();
+			tabChoice.add(JObj);
+			s.put("choices",tabChoice);
+			//System.out.println("pas de choix");
+
+		}else{
+
+			//System.out.println("Vous avez des choix");
+			JSONArray tabChoice = this.getChoice();
+			tabChoice.add(JObj);
+
+			}
+		}
+
+		public void ajoutChoix(){
+			JSONObject s = (JSONObject) this.sections.get(this.number);
+			JSONArray tabChoice = new JSONArray();
+			s.put("choices",tabChoice);
+		}
+
+
+
+
+		/*public void supprimerChoix(String sectionAsupprimer){
+
+			//jsonArray.remove()
+
+			JSONArray  tabChoice = this.getChoice();
+
+			tabChoice.remove(sectionsAsupprimer);
+
+
+			}*/
+
+		/***********Creer un fichier à chaque chic et lancer les fichier ************/
+
+
+	}

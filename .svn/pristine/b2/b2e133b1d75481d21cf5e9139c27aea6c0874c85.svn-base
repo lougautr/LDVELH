@@ -1,0 +1,14 @@
+@misc{Oracle,
+title = {Oracle},
+howpublished = {\url{https://docs.oracle.com/javase/7/docs/api/index.html}},
+}
+
+@misc{Mvnrepository,
+title = {Mvnrepository},
+howpublished = {\url{https://mvnrepository.com/open-source/java-specs}},
+}
+
+@misc{Jmdoudoux,
+title = {Jmdoudoux},
+howpublished = {\url{https://www.jmdoudoux.fr/accueil_java.htm}},
+}

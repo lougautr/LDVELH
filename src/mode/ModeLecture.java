@@ -1,0 +1,101 @@
+package mode;
+
+import noeud.*;
+import boutons.*;
+import principal.*;
+import javax.swing.*;
+import org.json.simple.JSONObject;
+import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+import java.awt.*;
+
+/*La classe ModeLecture permet d'instancier les fonctions pour lire des histoires
+Elle prend en paramètre le texte de l'introduction, la zone du texte de la section,
+le panel principal, l'objet section et la fenêtre principal et le mode édition*/
+
+public class ModeLecture{
+
+  protected String texteIntroduction;
+  protected JTextArea zoneTexteSection;
+  protected JPanel panelPrincipal;
+  protected JPanel panelTexte;
+  protected JPanel panelBoutons;
+  protected JPanel panelMenu;
+  protected JSONObject sections;
+  protected Fenetre principal;
+  protected ModeEdition edition;
+
+  public ModeLecture(String texteIntroduction, JTextArea zoneTexteSection, JPanel panelPrincipal, JSONObject sections, Fenetre principal, ModeEdition edition){
+    this.texteIntroduction = texteIntroduction;
+    this.zoneTexteSection = zoneTexteSection;
+    this.panelPrincipal = panelPrincipal;
+    this.panelMenu = panelMenu;
+    this.sections = sections;
+    this.principal = principal;
+    this.edition = edition;
+    //On instancie toutes nos variables
+    panelTexte = new JPanel();
+    panelMenu = new JPanel();
+    panelBoutons = new JPanel();
+  }
+
+  public void afficherIntro(){
+    //On affiche le texte de l'intro de notre section et le bouton pour commencer l'histoire
+		zoneTexteSection.setText(texteIntroduction);
+		zoneTexteSection.setFont(new Font("Serif", Font.PLAIN, 13));
+		panelTexte.setLayout(new BoxLayout(panelTexte, BoxLayout.PAGE_AXIS));
+		panelTexte.add(zoneTexteSection);
+		Commencer commencer = new Commencer(panelBoutons, sections, edition, this, false);
+		panelBoutons.add(commencer);
+		panelPrincipal.add("Center",panelTexte);
+		panelPrincipal.add("South",panelBoutons);
+		panelTexte.setVisible(true);
+		panelBoutons.setVisible(true);
+	}
+
+	public void afficherParagraphe(Noeud unNoeud){
+    //On s'assure que le panel de bouton ne contient rien
+		panelBoutons.removeAll();
+		HashMap<String,String> mapNoeud = new HashMap<>(unNoeud.choices());
+		String phrase = unNoeud.getTexte();
+		zoneTexteSection.setText(phrase);
+    //On ajoute la liste des choix au model
+		List<String> myList2 = new ArrayList<>();
+		DefaultListModel<String> model = new DefaultListModel<>();
+		for(String str : mapNoeud.keySet()){
+			model.addElement(mapNoeud.get(str));
+		}
+		JList<String> listSections2 = new JList<String>(model);
+		listSections2.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+    //On ajoute l'évènement pour afficher le paragraphe clique
+		listSections2.addMouseListener(new MouseAdapter(){
+					 public void mouseClicked(MouseEvent e) {
+							if (e.getClickCount() == 2) {
+								 String selected = listSections2.getSelectedValue();
+								 for(Map.Entry map: mapNoeud.entrySet()){
+						 			if(map.getValue().equals(selected)){
+										String index = map.getKey().toString();
+										Noeud noeud1 = new Noeud(sections,index);
+										afficherParagraphe(noeud1);
+									}
+						 		}
+							}
+					 }
+				});
+		JScrollPane scrollPane2 = new JScrollPane();
+		scrollPane2.setViewportView(listSections2);
+		listSections2.setFont(new Font("Serif", Font.PLAIN, 15));
+		if(panelTexte.getComponentCount() == 2){
+			panelTexte.remove(panelTexte.getComponent(1));
+			panelTexte.add(scrollPane2);
+		}else{
+			panelTexte.add(scrollPane2);
+		}
+		Accueil accueil = new Accueil(panelPrincipal, panelMenu, panelBoutons, panelTexte, principal);
+		panelBoutons.add(accueil);
+		panelBoutons.repaint();
+  }
+}

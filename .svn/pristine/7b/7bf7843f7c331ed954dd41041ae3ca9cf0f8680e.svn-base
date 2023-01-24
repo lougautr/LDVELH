@@ -1,0 +1,43 @@
+package boutons;
+
+import principal.*;
+import noeud.*;
+import javax.swing.*;
+import java.awt.event.*;
+import java.util.HashMap;
+import org.json.simple.*;
+
+
+
+public class Sauvegarder extends JButton{
+
+  protected JSONObject sections;
+  protected HashMap<Integer, String> dicoTexteSections;
+  protected HashMap<String, HashMap<String,String>> dicoSections;
+  protected HashMap<String,String> mapNoeud;
+  protected JFrame f;
+  protected String texteIntroduction;
+
+  public Sauvegarder(JSONObject sections, HashMap<Integer, String> dicoTexteSections, HashMap<String, HashMap<String,String>> dicoSections, HashMap<String,String> mapNoeud, JFrame f, String texteIntroduction){
+    this.setText("sauvegarder");
+    this.addMouseListener(new MouseAdapter(){
+      public void mouseClicked(MouseEvent e) {
+        String nomFichier = JOptionPane.showInputDialog(f, "Saisissez le nom de votre histoire");
+        for(int i = 1; i <= sections.size(); i++){
+          Noeud noeud = new Noeud(sections,Integer.valueOf(i).toString());
+          if(dicoTexteSections.get(i).isEmpty()){
+            dicoTexteSections.put(Integer.valueOf(i),noeud.getTexte());
+          }
+          if(dicoSections.get("Sections " + i).isEmpty()){
+            HashMap<String,String> mapNoeud = new HashMap<>(noeud.choices());
+            dicoSections.put("Sections " + noeud.getNumber(), mapNoeud);
+          }
+        }
+        System.out.println(dicoSections.get("Sections 1"));
+        CreationJson edition = new CreationJson();
+        edition.creationJson(texteIntroduction, dicoSections, dicoTexteSections ,nomFichier);
+      }
+    });
+  }
+
+}

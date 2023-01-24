@@ -1,0 +1,301 @@
+\documentclass[12pt]{article}
+
+\usepackage[utf8]{inputenc}%encodage des caractères
+\usepackage[T1]{fontenc}%encodage de la police
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{hyperref}
+\usepackage{tikz}
+\setlength{\parindent}{0pt} 
+
+\title{Rapport Conception Logicielle Avancée}
+\author{Antonin Montagne, Lou-Anne Gautherie, Oumoul Kiramy Bah, \\
+Pape Maguette Diongue}
+\date{4 Avril 2022}
+
+\begin{document}
+
+\maketitle
+
+\begin{figure}[h]
+	\begin{center}
+		\includegraphics[scale=0.3]{img/fond.png}	
+	\end{center}
+\end{figure}
+
+\begin{figure}[b]
+	\begin{center}
+		\includegraphics[scale=0.7]{img/unicaen.png}	
+	\end{center}
+\end{figure}
+
+\thispagestyle{empty}
+\setcounter{page}{0}
+\newpage
+
+\tableofcontents
+\newpage
+
+\section{Introduction}
+
+\subsection{Description du projet}
+
+Nous avions pour but de coder en Java, un jeu qui s'intitule "Un livre dont vous êtes le héros". Ce genre de jeu est une progression de lecture en fonction des choix et du résultat des actions du lecteur. \\
+Ce genre de "livre" est très populaire chez les enfants, comme chez les adultes. \\
+La collection de livre "Sherlock Holmes" possède sa propre série de "livre dont vous êtes le héros". \\
+\\
+Quelques exemples de cette série:
+\begin{itemize}
+\item Meurtre au Club Diogène
+\item L'Émeraude de la Rivière Noire 
+\item L'Héritier Disparu
+\end{itemize}
+
+\subsection{Plan du rapport}
+
+Nous évoquerons d'abord quels étaient nos objectifs de départ (\ref{objectifs}), puis nous détaillerons les différentes étapes de la création de notre projet avec les rôles de chacuns (\ref{organisation}). Ensuite nous présenterons les éléments techniques utilisées (\ref{elemtech}) dans notre code, ainsi que l'achitecture de ce projet (\ref{architecture}). Finalement nous présenterons certaines expérimentations (\ref{experimentations}) et terminerons par une courte conclusion (\ref{conclusion}).
+
+\section{Objectifs du projet} \label{objectifs}
+
+Nous voulions développer un editeur de texte, dans lequel le joueur peut créer sa propre histoire dont le lecteur est le héros. Cet editeur se présenterait sous forme de page vierge avec une fenetre qui demanderait à l'utilisateur de taper l'introduction de son histoire, puis les différents chapitres, qui conduisent à d'autres chapitres en fonction des choix choisis. D'un autre côté, le joueur pourrait choisir de charger son histoire précédemment écrite, ou une déjà existante. Une fois l'histoire chargée, le joueur pourra jouer de manière basique en suivant les choix déjà définis, ou d'en créer, ou supprimer en temps réel. Un fois la fenêtre du jeu fermée, le graphique de l'histoire s'afficherait sous format .png.
+
+\section{Fonctionnalités implémentées} \label{organisation}
+
+\subsection{Description des fonctionnalités}
+
+Les possibilités du jeu sont multiples. A partir de l'accueil, il est possible de créer une histoire à partir de rien, c'est-à-dire d'écrire l'intro, ainsi que de créer les choix possibles. On pourra choisir d'enregistrer cette nouvelle histoire dans un fichier json, et de la charger. 
+Il est aussi possible de modifier une histoire déjà écrite en ajoutant (avec le bouton "\textit{plus}") ou supprimant (avec le bouton "\textit{moins}") des chapitres et des choix.
+La dernière fonctionnalité est de charger les histoires .json. L'intro s'affichera ainsi qu'un bouton "\textit{Commencer l'histoire}" qui lancera le premier chapitre avec les choix en dessous. Il suffira juste de cliquer dessus pour accéder au chapitre correspondant.
+En fermant la fenêtre, le graphe de cette histoire s'affichera.
+\\
+\begin{figure}[htpb]
+  \begin{center}
+    \begin{tikzpicture}
+      \node[rectangle, draw, color=violet](1) at (1,3) {$1$};
+      \node[rectangle, draw, color=violet] (273) at (0,1) {$273$};
+      \node[rectangle, draw, color=violet] (160) at (2,0) {$160$};
+      \draw[->, color=red] (1) -- (273);
+      \draw[->, color=red] (273) -- (160);
+      \draw[->, color=red] (1) -- (160);
+    \end{tikzpicture}
+  \end{center}
+  \caption{Graphe du premier chapitre et des premiers choix du fichier \textit{fotw.json}}
+\end{figure}
+
+\subsection{Organisation du projet}
+
+Pour commencer nous avons pris le fichier \textsf{fotw.json} qui était joint sur ecampus avec la description du projet. Ce fichier contient une histoire déjà écrite avec 350 chapitres comportant tous des choix. Cette histoire est donc séparée en "sections" allant de 1 à 350. 
+\\
+Kiramy a décidé de 
+\\\\
+Après avoir pu accéder à tous les noeuds de ce fichier \textsf{fotw.json}, Antonin s'est occupé de la partie interface lorsque nous chargeons ce fichier là.
+\\
+Tout d'abord dans la classe \textsf{"ModifierChargerHistoire"} il a récupéré l'introduction et l'objet section grâce à la méthode \texttt{get} de l'objet \texttt{JSONObject}.
+Il les a passé en argument au constructeur des classes \textsf{ModeEdition} et \textsf{ModeLecture} ainsi qu'une condition pour savoir quel mode l'utilisateur veut-il lancer: le mode lecture ou le mode édition. Ensuite on appel la fonction \texttt{afficherIntro()} de l'un des deux modes.
+\\
+Dans les deux modes, l'introduction est affiché de la même façon. Il a ajouté l'introduction au panel dédié. Pour les sections, il les a affiché que dans le mode édition. Pour cela il les a fait une boucle allant  
+\\\\
+Lou-Anne a décidé de créer deux boutons sur la page d'accueil, un pour "\textit{Créer / modifier une histoire}", et un autre pour "\textit{Charger une histoire}". Ces deux boutons se trouve dans la fonction \texttt{afficherAccueil()}, dans la classe \textsf{Fenetre} et affichent la liste des fichiers d'extension .JSON contenus dans le paquetage "\textsf{files}". Pour ce faire, elle a récupérée les fichiers se trouvant dans le dossier, les a stockés dans une liste \texttt{DefaultListModel<String>}, puis elle a transformé cette liste en \texttt{JList<String>} pour pouvoir la manipuler avec \texttt{swing}. Cette liste est devenue par la suite cliquable avec la fonction \texttt{setSelectionMode()} et  pour récupérer le fichier lorsqu'il est cliqué, elle a utilisé la fonction \texttt{getSelectedValue()} pour récupérer son nom. \\
+Pour le bouton "\textit{Charger une histoire}", après avoir choisit le fichier que l'on veut charger, cela affiche l'intro de l'histoire grâce à la classe "\textsf{ModifierChargerHistoire} qui lance la fonction \texttt{afficherIntro()} codé par Antonin.\\
+Une fois l'introduction de l'histoire affichée, Lou-Anne a codé un bouton "\textit{Commencer l'histoire}" qui lance le paragraphe du premier chapitre avec la fonction \texttt{afficherParagraphe()} d'Antonin, ainsi que la liste de tous les chapitres à gauche de l'écran.
+\\\\
+Pour finir, lorsque la fenêtre se ferme, le graphe de l'histoire s'affiche. Pour ce faire, Lou-Anne a utilisée \textbf{Graphviz}. Grâce aux classes \textsf{File} et \textsf{FileWriter} de Java, elle a fait en sorte de créer un fichier d'extension .dot, de le remplir du codage du graphe (grâce à la fonction \texttt{toDot2()} qui appelle \texttt{toDot()}). La fonction \texttt{toDot2()} écrit le début du fichier avec "disgraph G {..." avec les styles des noeuds et des flèches, ensuite, pour chaque chapitre du fichier et ses choix, la fonction \texttt{toDot()} est appelée. Elle trace des flèches entre chaque choix afin de les lier. Tout ça est donc stocké dans le fichier d'extension .dot. Avec l'aide de la classe \textsf{Process} de Java, nous pouvons donc écrire des lignes de commandes dans un fichier .java. Elle donc fait en sorte d'éxécuter le fichier \textsf{output.dot} afin de le compiler en \textsf{output.jpg} avec la commande -dot (qui prend en argument un fichier d'extension .dot et renvoie un graphe d'extension .jpg).
+\\\\
+tests unitaires
+\\\\
+Pour ce rapport, Lou-Anne s'est occupé d'importer tout ce que nous avions fait en TP d'\textit{Outils et Communication}. Elle a donc fait le diagramme des classes grâce à \textbf{Dia}, l'introduction du rapport, les expérimentations et a importé les paquetages utilisés et les sources.
+
+\section{Eléments techiniques} \label{elemtech}
+
+\subsection{Paquetages utilisées}
+
+\subsubsection{Paquetages Java}
+
+Le paquetage \texttt{ArrayList} est utilisé dans les classes \textsf{CreerHistoire, ModeEdition, ModeLecture} et \textsf{Noeud}.
+\\\\
+Le paquetage \texttt{DefaultListModel}est utilisé dans les classes \textsf{CreerModifierHistoire, Moins, Plus, ModeEdition, ModeLecture} et \textsf{Fenetre}.
+\\\\
+Le paquetage \texttt{File} est utilisé:\\
+Dans \textsf{Fenetre} pour parcourir la liste des fichiers dans le dossier \textsf{files}.\\
+Dans \textsf{ModifierChargerHistoire} pour écrire ce qu'on veut dans le fichier \textsf{output.dot}.\\
+Dans \textsf{CreationJson} pour donner un nom au fichier JSON créé.\\
+Dans \textsf{LaunchGraph} et \textsf{NoeudTest} pour lire le fichier JSON.
+\\\\
+Le paquetage \texttt{HashMap} est utilisé dans les classes \textsf{Moins, Plus, Sauvegarder, ModeEdition, ModeLecture, CreationJson, Noeud} et \textsf{Fenetre}.
+\\\\
+Le paquetage \texttt{JSONObject} est utilisé dans les packages \textsf{mode} et \textsf{noeud} et dans les classes \textsf{Commencer, CreerModifierHistoire, Plus, Sauvegarder} et \textsf{Fenetre}.
+\\\\
+Le paquetage \texttt{Process} est utilisé dans \textsf{LaunchGraph} et \textsf{ModifierChargerHistoire} pour écrire des lignes de commandes dans un fichier .java.
+\\\\
+Beaucoup de classes de \texttt{swing} ont été utilisées pour l'interface graphique. Ces classes sont les suivantes:
+\begin{itemize}
+	\item \texttt{JButton} dans le package \textsf{boutons} et dans la
+		classe \textsf{CreerHistoire}
+	\item \texttt{JFrame} dans les classes \textsf{Plus, Sauvegarder,
+		CreerHistoire} et \textsf{Fenetre}
+	\item \texttt{JList} dans les classes \textsf{ChargerHistoire,
+		CreerModifierHistoire, Moins, ModeEdition, ModeLecture} et
+		\textsf{Fenetre}
+	\item \texttt{JPanel} dans les packages \textsf{boutons}, et
+		\textsf{mode} et dans la classe \textsf{Fenetre}
+	\item \texttt{JTextArea} dans les classes \textsf{ChargerHistoire,
+		CreerModifierHistoire, ModificationTexte, Plus, Creer Histoire,
+		ModeEdition, ModeLecture} et \textsf{Fenetre}
+\end{itemize}
+
+Le paquetage \texttt{Toolkit} est utilisé dans les classes \textsf{Plus, CreerHistoire, ModeEdition} et \textsf{Fenetre} pour définir la taille de l'écran.
+
+\subsubsection{Paquetages JAR}
+
+Nous avons utilisés plusieurs archives .jar:
+
+\begin{table}[h]
+	\begin{center}
+		\begin{tabular}{| c | c |}
+			\hline
+			\textbf{nom librairie} & \textbf{utilité} \\
+			\hline
+  			hamcrest-core-1.3.jar & tests \\
+ 			\hline
+  			javax.json-1.1.4.jar & gestion d'un JSON \\
+  			\hline
+  			json-simple-1.1.1.jar & gestion d'un JSON \\
+  			\hline
+  			junit-4.13.2.jar & tests \\
+  			\hline
+ 		\end{tabular}
+		\caption{Liste des archives .jar utilisées}
+	\end{center}
+\end{table}
+
+\subsection{Algorithmes utilisés}
+
+\section{Architecture du projet} \label{architecture}
+
+\subsection{Diagramme des classes}
+
+Diagramme de tous les packages (et leurs dépendances):
+
+\begin{center}
+	\includegraphics[scale=0.4]{img/jeu.png}	
+\end{center}
+
+Package \textit{boutons} avec ses classes (attributs):
+\begin{center}
+	\includegraphics[scale=0.3]{img/boutons.png}
+\end{center}	
+
+Package \textit{mode} avec ses classes (attributs et méthodes):
+\begin{center}
+	\includegraphics[scale=0.5]{img/mode.png}
+\end{center}	
+
+Package \textit{noeud} avec ses classes (attributs et méthodes):
+\begin{center}
+	\includegraphics[scale=0.3]{img/noeud.png}
+\end{center}	
+
+Package \textit{principal} avec ses classes (attributs et méthodes):
+\begin{center}
+	\includegraphics[scale=0.4]{img/principal.png}
+\end{center}
+
+\section{Expérimentations} \label{experimentations}
+
+Lorsque vous lancez le jeu, vous arrivez sur une fenêtre d'accueil avec deux boutons:
+
+\begin{center}
+	\includegraphics[scale=0.4]{img/accueil.png}
+\end{center}
+
+Si vous cliquez sur le bouton "\textit{Créer/modifier une histoire}", vous aurez le choix de créer une histoire à partir de rien, ou de modifier une histoire déjà existante:
+
+\begin{center}
+	\includegraphics[scale=0.5]{img/creer.png}
+\end{center}
+
+Dans le cas où vous voulez en créer une à partir de rien, une fenêtre va s'ouvrir en vous demandant d'écrire l'intro de votre histoire. Il suffira de cliquer sur le bouton "\textit{Cliquer pour valider}" pour passer à la suite:
+
+\begin{center}
+	\includegraphics[scale=0.4]{img/intro.png}\\
+	\includegraphics[scale=0.4]{img/cliquer.png}
+\end{center}
+
+Une autre fenêtre du même type s'ouvrira et vous demandera de saisir le contenu du premier chapitre, avec le même bouton pour valider:
+
+\begin{center}
+	\includegraphics[scale=0.4]{img/chapitre1.png}\\
+	\includegraphics[scale=0.4]{img/cliquer.png}
+\end{center}
+
+Vous arrivez sur une fenêtre contenant la liste des chapitres à gauche, et le contenu du chapitre en cours à gauche (énoncé + choix). Un bouton "\textit{Commencer l'histoire}" se trouvera en bas de la page pour commencer l'édition:
+
+\begin{center}
+	\includegraphics[scale=0.5]{img/debut.png}\\
+	\includegraphics[scale=0.4]{img/commencer.png}
+\end{center}
+
+Le bouton "\textit{Commencer l'histoire}" laissera place à 4 boutons: "\textit{accueil}" pour retourner à l'accueil, "\textit{plus}" pour ajouter un choix au chapitre en cours d'édition, "\textit{moins}" pour supprimer un choix après l'avoir sélectionner, "\textit{modification texte}" pour modifier l'énoncer d'un chapitre (il faut d'abord modifier l'énoncé, puis appuyer sur le bouton pour sauvegarder la modification), et enfin, le bouton "\textit{sauvegarder}" qui servira à la fin de la création pour enregistrer l'histoire.
+
+\begin{center}
+	\includegraphics[scale=0.4]{img/boutonsEdition.png}
+\end{center}
+
+Quand vous appuyez sur le bouton "\textit{plus}", une petite fenêtre s'ouvre et vous demande de saisir votre choix. Il faut que votre choix finisse par le numéro du chapitre voulu:
+
+\begin{center}
+	\includegraphics[scale=0.4]{img/choix1.png}
+\end{center}
+
+Voila les choix du chapitre 1:
+
+\begin{center}
+	\includegraphics[scale=0.5]{img/choix.png}
+\end{center}
+
+Après avoir écrit votre histoire, vous devez appuyer sur "\textit{sauvegarder}" et une petite fenêtre s'ouvrira en vous demandant de saisir le nom de votre histoire:
+
+\begin{center}
+	\includegraphics[scale=0.5]{img/nom.png}
+\end{center}
+
+Vous pourrez alors retourner à l'accueil, avec le bouton "\textit{accueil}" et la liste des fichiers à charger s'afficheront, dont l'histoire que vous venez d'écrire:
+
+\begin{center}
+	\includegraphics[scale=0.5]{img/charger.png}
+\end{center}
+
+Après avoir joué cette histoire, lorsque vous fermerez la fenêtre, le graphe de votre histoire s'affichera:
+
+\begin{center}
+	\includegraphics[scale=0.4]{img/graphe.png}
+\end{center}
+
+\section{Conclusion} \label{conclusion}
+
+Nous avons donc un jeu complet avec editeur de texte et algorithmes, c'était bien l'objectif que nous nous étions fixés. Nous n'avons malheureusement pas eu le temps de faire des sytèmes de rencontre mais nous sommes quand même fier de ce que nous avons produit. 
+
+\section{Sources}
+
+\href{https://docs.oracle.com/javase/7/docs/api/index.html}{oracle.com}\\
+\href{https://mvnrepository.com/open-source/java-specs}{mvnrepository.com}
+\\
+\href{http://www.java2s.com/}{java2s.com}
+\\
+\href{https://forums.commentcamarche.net/forum/java-265}{forums.commentcamarche.net}
+\\
+\href{https://www.tutorialspoint.com/index.htm}{tutorialspoint.com}
+\\
+\href{https://waytolearnx.com/2020/06/tutoriels-java.html}{waytolearnx.com}
+\\
+\href{https://koor.fr/Java/Index.wp}{koor.fr}
+\\
+\href{https://www.geeksforgeeks.org/java/?ref=shm}{geeksforgeeks.org}
+\\
+\href{https://www.tabnine.com/code/java/}{tabnine.com}
+\\
+\href{https://www.dreamincode.net/forums/forum/32-java/}{dreamincode.net}
+\\
+\href{https://www.jmdoudoux.fr/accueil_java.htm}{jmdoudoux.fr}
+
+\end{document}

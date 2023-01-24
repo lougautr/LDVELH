@@ -1,0 +1,59 @@
+package mode;
+
+import boutons.*;
+import noeud.*;
+import principal.*;
+import java.awt.event.*;
+import java.awt.Toolkit;
+import java.awt.*;
+import javax.swing.*;
+import org.json.simple.JSONObject;
+
+/*La classe CreerHistoire permet de tout preparer pour ecrire une histoire a partir de rien
+Elle prend en parametre la fenetre principal, le panel de la liste des histoires, le panel principal, le panel des boutons,
+et l'objet sections*/
+
+public class CreerHistoire{
+
+  protected Fenetre principal;
+  protected JPanel panelListeHist;
+  protected JPanel panelPrincipal;
+  protected JPanel panelBoutons;
+
+  protected JSONObject sections;
+
+  public CreerHistoire(Fenetre principal, JPanel panelListeHist, JPanel panelPrincipal, JPanel panelBoutons, JSONObject sections){
+    //On cree une nouvelle JFrame avec une zone texte et un bouton pour fermer la JFrame
+    JFrame frameSection = new JFrame("Saisissez le texte de l'introduction");
+    JPanel panelSection = new JPanel();
+    JButton ferme = new JButton("Cliquer pour valider!");
+    JTextArea texteSection = new JTextArea();
+    ferme.addMouseListener(new MouseAdapter(){
+      public void mouseClicked(MouseEvent e){
+        frameSection.dispose();
+        principal.setIntro(texteSection.getText());
+        //Quand on clique sur le bouton on recupere le texte saisie par l'utilisateur puis on cree la section 1 pour commencer l'histoire
+        Noeud n = new Noeud(sections,"1");
+        n.addNoeud();
+        n.ajoutTexte(" ");
+        n.ajoutChoix();
+        principal.setSections(sections);
+        //On cree une instance de ModeEdition pour commncer a editer notre histoire
+        ModeEdition edition = new ModeEdition(texteSection.getText(), principal.getZoneTexteSection(), panelPrincipal, sections, principal);
+        edition.afficherIntro(texteSection.getText());
+        panelBoutons.setVisible(false);
+        panelPrincipal.remove(panelBoutons);
+        panelListeHist.setVisible(false);
+        panelPrincipal.remove(panelListeHist);
+      }
+    });
+
+    panelSection.add(texteSection);
+    panelSection.add(ferme);
+    frameSection.setSize(Toolkit.getDefaultToolkit().getScreenSize().width, Toolkit.getDefaultToolkit().getScreenSize().height);
+    frameSection.getContentPane().add(panelSection);
+    frameSection.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+    frameSection.setVisible(true);
+  }
+
+}

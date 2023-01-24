@@ -1,0 +1,4 @@
+javac -d build -cp .:lib/json-simple-1.1.1.jar src/demo/*.java
+java -cp build:lib/json-simple-1.1.1.jar demo.Test
+rm output.dot
+xdg-open output.jpg

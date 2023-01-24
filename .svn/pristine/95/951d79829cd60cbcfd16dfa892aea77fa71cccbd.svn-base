@@ -1,0 +1,73 @@
+package noeud;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
+import java.util.Iterator;
+
+import java.util.HashMap;
+import java.util.ArrayList;
+
+import java.io.*;
+
+
+public class CreationJson{
+
+	public void creationJson(String intro, HashMap <String, HashMap<String, String>> dicoSections, HashMap<Integer,String> dicoTexteSections, String nomFichier) {
+
+		JSONParser parser = new JSONParser();
+
+		try {
+
+			JSONObject livre = new JSONObject();/*ceci representera l'object Sections*/
+
+			JSONObject O = new JSONObject ();
+
+			/*****Introduction******/
+
+			JSONArray texte = new JSONArray();
+			texte.add(intro);
+			//int i = 1;
+			/********1er noeud********/
+			/*for(String section : dicoSections.keySet()){
+				Noeud N = new Noeud(O,Integer.valueOf(i).toString());
+				N.addNoeud();
+				N.ajoutTexte(dicoTexteSections.get(Integer.valueOf(i)));
+				for(String str : dicoSections.get(section).keySet()){
+						N.ajoutChoix(str,dicoSections.get(section).get(str));
+				}
+				i++;
+			}*/
+			for(int i = 1; i <= dicoSections.size(); i++){
+				Noeud N = new Noeud(O,Integer.valueOf(i).toString());
+				N.addNoeud();
+				N.ajoutTexte(dicoTexteSections.get(Integer.valueOf(i)));
+				if(dicoSections.get("Sections " + Integer.valueOf(i).toString()).keySet().isEmpty()){
+					N.ajoutChoix();
+				}
+				for(String str : dicoSections.get("Sections " + Integer.valueOf(i).toString()).keySet()){
+						N.ajoutChoix(str,dicoSections.get("Sections " + Integer.valueOf(i).toString()).get(str));
+				}
+			}
+			System.out.println("fini");
+			livre.put("intro_sequence",texte);
+			livre.put("sections",O);
+			FileWriter myWriter = new FileWriter("./files/"+nomFichier+".json");
+
+
+			myWriter.write(livre.toString());
+			myWriter.close();
+
+		}
+		catch (IOException e)
+		{
+      System.out.println("An error occurred.");
+      e.printStackTrace();
+      }
+		}
+	}

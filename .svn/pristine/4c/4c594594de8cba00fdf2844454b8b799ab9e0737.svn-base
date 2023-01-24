@@ -1,0 +1,49 @@
+package demo;
+
+import org.json.simple.*;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
+import java.util.Iterator;
+import javax.swing.*;
+import java.awt.Dimension;
+
+public class Test {
+
+    public static void main(String[] args) {
+
+        JSONParser parser = new JSONParser();
+
+        try (Reader reader = new FileReader("./files/fotw.json")) {
+
+            JSONObject jsonObject = (JSONObject) parser.parse(reader);
+            JSONObject sections = (JSONObject) jsonObject.get("sections");
+            JSONArray intro = (JSONArray) jsonObject.get("intro_sequence");
+            Noeud unNoeud = new Noeud(sections,"6");
+
+            Fenetre app = new Fenetre(sections);
+            String texteIntro = "";
+            for(int i = 0; i < intro.size(); i++){
+        			texteIntro += intro.get(i) + "\n";
+        		}
+            //System.out.println(texteIntro);
+            app.afficherFenetre(texteIntro);
+            
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+
+}

@@ -1,0 +1,34 @@
+package boutons;
+
+import javax.swing.*;
+import java.awt.event.*;
+import principal.*;
+import noeud.*;
+import mode.*;
+import org.json.simple.JSONObject;
+
+public class Commencer extends JButton{
+
+protected JPanel pannelBoutonDebut;
+protected JSONObject sections;
+protected ModeEdition edition;
+protected ModeLecture lecture;
+protected boolean test;
+
+  public Commencer(JPanel pannelBoutonDebut, JSONObject sections, ModeEdition edition, ModeLecture lecture, boolean test){
+    this.setText("commencer l'histoire");
+    this.addMouseListener(new MouseAdapter(){
+      public void mouseClicked(MouseEvent e) {
+        if (e.getClickCount() == 1) {
+          Noeud noeud1 = new Noeud(sections,"1");
+          pannelBoutonDebut.remove(pannelBoutonDebut.getComponent(0));
+          if(test)
+            edition.afficherParagraphe(noeud1);
+          else
+            lecture.afficherParagraphe(noeud1);
+        }
+      }
+    });
+  }
+
+}

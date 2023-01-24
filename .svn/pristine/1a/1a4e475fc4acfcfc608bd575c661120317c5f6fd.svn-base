@@ -1,0 +1,28 @@
+package boutons;
+
+import principal.*;
+import java.awt.event.*;
+import javax.swing.*;
+
+public class Accueil extends JButton{
+
+  protected JPanel pannelPrincipal;
+  protected JPanel pannelMenu;
+  protected JPanel pannelBoutonDebut;
+  protected JPanel pannelTexte;
+  protected Fenetre principal;
+
+  public Accueil(JPanel pannelPrincipal, JPanel pannelMenu, JPanel pannelBoutonDebut, JPanel pannelTexte, Fenetre principal){
+    this.setText("accueil");
+    this.addMouseListener(new MouseAdapter(){
+		public void mouseClicked(MouseEvent e) {
+			pannelPrincipal.removeAll();
+			pannelMenu.removeAll();
+			pannelBoutonDebut.removeAll();
+			pannelTexte.removeAll();
+			principal.afficherFenetre1();
+			}
+		});
+  }
+
+}

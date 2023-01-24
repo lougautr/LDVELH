@@ -1,0 +1,22 @@
+package demo;
+
+import javax.swing.*;
+import java.awt.Dimension;
+
+public class Fenetre{
+	public Fenetre(){}
+	
+	public void afficherParagraphe(String texte){
+		JFrame f = new JFrame("ldvelh-lap");
+		f.setSize(1500,1500);
+
+		JPanel pannel = new JPanel();
+
+		JTextArea testField1 = new JTextArea(texte);
+
+		pannel.add(testField1);
+
+		f.getContentPane().add(pannel);
+		f.setVisible(true);
+  }
+}

@@ -1,0 +1,3 @@
+javac -d build -cp .:lib/* src/principal/*.java src/boutons/*.java src/noeud/*.java src/mode/*.java
+java -cp build:lib/* principal.Main
+#java -cp build:lib/* principal.LaunchGraph

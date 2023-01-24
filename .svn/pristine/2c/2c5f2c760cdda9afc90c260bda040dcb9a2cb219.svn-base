@@ -1,0 +1,58 @@
+package demo;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
+import java.util.Iterator;
+
+import java.util.HashMap;
+import java.util.ArrayList;
+
+
+
+public class NoeudDemo{
+	
+	public static void main(String[] args) {
+		
+		JSONParser parser = new JSONParser();
+  
+
+        try (Reader reader = new FileReader("./files/fotw.json")) {
+
+            JSONObject jsonObject = (JSONObject) parser.parse(reader);
+            JSONObject sections = (JSONObject) jsonObject.get("sections");
+            
+            
+            Noeud unNoeud = new Noeud(sections,"6");
+            
+            System.out.println("Numero du noeud : "+unNoeud.getNumber());
+            System.out.println("Texte du noeud : "+unNoeud.getTexte());
+            System.out.println("Choix du noeud : "+unNoeud.getChoice());
+            System.out.println("Texte du choix du noeud : "+unNoeud.getChoiceTexte());
+            System.out.println("Noeuds Suivants : "+unNoeud.getChoiceNumber());
+            System.out.println("Choices:"+unNoeud.choices());
+
+            
+            } 
+            
+            
+         catch (IOException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+		
+		
+		}
+	
+	
+	
+	
+	
+	
+	}

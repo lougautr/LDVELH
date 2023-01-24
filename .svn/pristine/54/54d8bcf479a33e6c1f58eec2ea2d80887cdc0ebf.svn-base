@@ -1,0 +1,65 @@
+package boutons;
+
+import java.awt.event.*;
+import javax.swing.*;
+import java.util.HashMap;
+import java.awt.Toolkit;
+import java.awt.*;
+import org.json.simple.*;
+
+import principal.*;
+import noeud.*;
+
+public class Plus extends JButton{
+
+  protected DefaultListModel modelSections;
+  protected DefaultListModel<String> model;
+  protected HashMap<String, HashMap<String,String>> dicoSections;
+  protected HashMap<Integer, String> dicoTexteSections;
+  protected Fenetre principal;
+  protected Noeud unNoeud;
+  protected HashMap<String,String> mapNoeud;
+  protected JSONObject sections;
+
+  public Plus(DefaultListModel modelSections, HashMap<String, HashMap<String,String>> dicoSections, HashMap<Integer, String> dicoTexteSections, Fenetre principal, Noeud unNoeud, HashMap<String,String> mapNoeud, DefaultListModel<String> model, JSONObject sections){
+    this.setText("plus");
+    Dimension tailleMoniteur = Toolkit.getDefaultToolkit().getScreenSize();
+    int longueur = tailleMoniteur.width;
+    int hauteur = tailleMoniteur.height;
+    this.addMouseListener(new MouseAdapter(){
+      public void mouseClicked(MouseEvent e) {
+          String getMessage = JOptionPane.showInputDialog(principal, "Saisissez le texte de votre choix et mettez le numéro de la section à la fin sans point");
+          String mot = getMessage.substring(getMessage.lastIndexOf(" ")+1, getMessage.length());
+          if(!modelSections.contains("Sections " + mot)){
+            modelSections.addElement("Sections " + mot);
+            HashMap<String,String> a = new HashMap<>();
+            dicoSections.put("Sections " + mot, a);
+            JFrame frameSection = new JFrame("frameSection");
+            JPanel panelSection = new JPanel();
+            JButton ferme = new JButton("Cliquer pour valider!");
+            JTextArea texteSection = new JTextArea();
+            ferme.addMouseListener(new MouseAdapter(){
+              public void mouseClicked(MouseEvent e){
+                frameSection.dispose();
+                Noeud N2 = new Noeud(sections,mot);
+                N2.addNoeud();
+                N2.ajoutTexte(texteSection.getText());
+                dicoTexteSections.put(Integer.valueOf(N2.getNumber()),texteSection.getText());
+                N2.ajoutChoix();
+              }
+            });
+
+            panelSection.add(texteSection);
+            panelSection.add(ferme);
+            frameSection.setSize(longueur, hauteur);
+            frameSection.getContentPane().add(panelSection);
+            frameSection.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+            frameSection.setVisible(true);
+          }
+          model.addElement(getMessage);
+          mapNoeud.put(mot, getMessage);
+          dicoSections.put("Sections " + unNoeud.getNumber(), mapNoeud);
+        }
+      });
+    }
+  }

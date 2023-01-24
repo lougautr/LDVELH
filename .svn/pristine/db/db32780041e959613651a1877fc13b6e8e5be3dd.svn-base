@@ -1,0 +1,93 @@
+package tests;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
+import java.util.Iterator;
+import java.lang.Integer;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+
+import static org.junit.Assert.*;
+
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import noeud.*;
+
+public class NoeudTest {
+
+	protected Noeud noeud;
+	protected JSONObject sections;
+
+	@BeforeClass
+	void setUpThis(){
+    System.out.println("@BeforeClass executed");
+
+    JSONParser parser = new JSONParser();
+    try (Reader reader = new FileReader("./files/jsonTest.json")) {
+			JSONObject jsonObject = (JSONObject) parser.parse(reader);
+      sections = (JSONObject) jsonObject.get("sections");
+		}
+
+		catch (IOException e) {
+    	e.printStackTrace();
+  	}
+
+		catch (ParseException e) {
+    	e.printStackTrace();
+  	}
+
+  	noeud = new Noeud(sections , "1");
+
+	}
+
+  @Test
+  public void testGetNumber(){
+    assertEquals("1", noeud.getNumber());
+  }
+
+	public void testGetSection(){
+		assertEquals(sections, noeud.getSection());
+	}
+
+	@Test
+	public void testGetTexte() {
+		assertEquals("texte de la section 1", noeud.getTexte());
+	}
+
+	@Test
+	public void testGetChoice() {
+		assertEquals("[{\"section\":\"1\",\"text\":\"choix 1\"}]", noeud.getChoice().toString());
+  }
+
+	@Test
+	public void testGetChoiceTexte() {
+		assertEquals("[choix 1]", noeud.getChoiceTexte().toString());
+  }
+
+  public void testGetChoiceNumber() {
+		assertEquals("[1]", noeud.getChoiceNumber().toString());
+  }
+
+  public static void main (String[] args){
+    NoeudTest n = new NoeudTest();
+    n.setUpThis();
+    n.testGetNumber();
+    n.testGetSection();
+    n.testGetTexte();
+    n.testGetChoice();
+    n.testGetChoiceTexte();
+    n.testGetChoiceNumber();
+  }
+}

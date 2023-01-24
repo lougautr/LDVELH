@@ -1,0 +1,125 @@
+package demo;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
+import java.util.Iterator;
+
+import java.util.HashMap;
+import java.util.ArrayList;
+
+import java.lang.Integer;
+
+public class Noeud{
+
+
+	protected JSONObject sections;
+
+	protected String number;
+
+	public Noeud(JSONObject sections , String number)
+
+	{
+
+		this.sections = sections;
+
+		this.number = number ;
+
+
+		}
+
+	public String getNumber(){
+
+		return this.number;
+
+		}
+
+	public String getTexte(){
+
+		JSONObject SectObject = (JSONObject) this.sections.get(this.number);
+		String textValue = (String) SectObject.get("text");
+
+		return textValue;
+
+		}
+
+	public JSONArray getChoice(){
+
+
+		JSONObject SectObject = (JSONObject) this.sections.get(this.number);
+		JSONArray choice = (JSONArray) SectObject.get("choices");
+		return choice;
+
+		}
+
+	public ArrayList<String> getChoiceTexte(){
+
+
+				JSONArray choice = this.getChoice();
+
+				ArrayList<String> listeTexte = new ArrayList<>();
+
+				if(choice.size() >=1){
+
+					for (int i=0; i< choice.size();i++)
+					{
+						JSONObject object = (JSONObject) choice.get(i);
+
+						String element =  (String) object.get("text");
+
+						listeTexte.add(element);
+
+						}
+				}
+
+				return listeTexte;
+		}
+
+	public ArrayList<String> getChoiceNumber(){
+
+
+			JSONArray choice = this.getChoice();
+			ArrayList<String> listeSection = new ArrayList<>();
+
+			if(choice.size() >=1)
+			{
+				for (int i=0; i< choice.size();i++)
+
+				{
+
+					JSONObject object = (JSONObject) choice.get(i);
+					String numberSection = (String) object.get("section");
+
+					listeSection.add(numberSection);
+
+					}
+				}
+
+				return listeSection;
+		}
+
+		public String toDot(){
+			String graph = "";
+	    graph += this.number + " -> {";
+	    for(String s: this.getChoiceNumber()){
+	      graph += s + " ";
+	    }
+	    graph += "};";
+	    return graph;
+	  }
+
+	  public String toDot2(){
+	    String graph = "digraph G { node[shape=squre, color=purple, style = bold]; edge[color=brown, arrowsize=1.5];";
+	    for(int i=1; i<=350; i++){
+				Integer ibis = new Integer(i);
+	      graph += new Noeud(this.sections, Integer.toString(ibis)).toDot() + "\n";
+	    }
+	    graph += "}";
+			return graph;
+	  }
+	}

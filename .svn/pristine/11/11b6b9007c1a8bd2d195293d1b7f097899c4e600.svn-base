@@ -1,0 +1,3 @@
+javac -d build -cp .:lib/* src/demo/*.java src/boutons/*.java src/noeud/*.java
+java -cp build:lib/* demo.Test
+#java -cp build:lib/* demo.LaunchGraph

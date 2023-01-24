@@ -1,0 +1,61 @@
+package noeud;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
+import java.util.Iterator;
+import java.util.HashMap;
+import java.util.ArrayList;
+import java.io.*;
+
+//La classe CreationJson permet d'ecrire l'histoire en cours dan sun fichier JSON
+
+public class CreationJson{
+
+	public void creationJson(String intro, HashMap <String, HashMap<String, String>> dicoSections, HashMap<Integer,String> dicoTexteSections, String nomFichier) {
+
+		JSONParser parser = new JSONParser();
+
+		try {
+			//On cree notre livre
+			JSONObject livre = new JSONObject();
+			//On cree notre object qui accueillera nos sections
+			JSONObject sections = new JSONObject ();
+			//On ajoute le exte de l'introduction a l'objet texte
+			JSONArray texte = new JSONArray();
+			texte.add(intro);
+			//On parcourt notre dictionnaires de sections et on cree un objet noeud au quelle on ajoute le texte et ses choix
+			for(int i = 1; i <= dicoSections.size(); i++){
+				Noeud N = new Noeud(sections,Integer.valueOf(i).toString());
+				N.addNoeud();
+				N.ajoutTexte(dicoTexteSections.get(Integer.valueOf(i)));
+				//Si la section ne comporte pas de choix on cree un objet choix vide
+				if(dicoSections.get("Sections " + Integer.valueOf(i).toString()).keySet().isEmpty()){
+					N.ajoutChoix();
+				}
+				for(String str : dicoSections.get("Sections " + Integer.valueOf(i).toString()).keySet()){
+						N.ajoutChoix(str,dicoSections.get("Sections " + Integer.valueOf(i).toString()).get(str));
+				}
+			}
+			//On ajoute a notre livre l'introduction et les sections
+			livre.put("intro_sequence",texte);
+			livre.put("sections",sections);
+			//On ecrit le tout dans un fichier
+			FileWriter myWriter = new FileWriter("./files/"+nomFichier+".json");
+
+
+			myWriter.write(livre.toString());
+			myWriter.close();
+
+		}
+		catch (IOException e)
+		{
+      System.out.println("An error occurred.");
+      e.printStackTrace();
+      }
+		}
+	}

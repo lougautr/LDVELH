@@ -1,0 +1,33 @@
+package boutons;
+
+import principal.*;
+import java.awt.event.*;
+import javax.swing.*;
+
+/*Le bouton accueil supprime les elements de tout les panels afin de retourner a la premiere fenetre comme si on venait de demarrer le logiciel
+Il prend en parametre les 4 panels utilises et le fenetre principal*/
+
+public class Accueil extends JButton{
+
+  protected JPanel panelPrincipal;
+  protected JPanel panelListeSections;
+  protected JPanel panelBoutons;
+  protected JPanel panelTexte;
+  protected Fenetre principal;
+
+  public Accueil(JPanel panelPrincipal, JPanel panelListeSections, JPanel panelBoutons, JPanel panelTexte, Fenetre principal){
+    this.setText("accueil");
+    this.addMouseListener(new MouseAdapter(){
+		public void mouseClicked(MouseEvent e) {
+      //On utilise removeALL sur chaque panel pour les viders de leurs composents
+			panelPrincipal.removeAll();
+			panelListeSections.removeAll();
+			panelBoutons.removeAll();
+			panelTexte.removeAll();
+      //On appel afficherAccueil pour revenir a la premiere fenetre du logiciel
+			principal.afficherAccueil();
+			}
+		});
+  }
+
+}

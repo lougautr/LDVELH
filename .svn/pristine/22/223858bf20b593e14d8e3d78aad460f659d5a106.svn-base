@@ -1,0 +1,187 @@
+package mode;
+
+import noeud.*;
+import boutons.*;
+import principal.*;
+import javax.swing.*;
+import org.json.simple.JSONObject;
+import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+import java.awt.Toolkit;
+import java.awt.*;
+
+/*La classe ModeEdition permet d'instancier les fonctions pour editer des histoires
+Elle prend en paramètre le texte de l'introduction, la zone du texte de la section,
+le panel principal, l'objet section et la fenêtre principal*/
+
+public class ModeEdition{
+
+  protected String texteIntroduction;
+  protected JTextArea zoneTexteSection;
+  protected JPanel panelPrincipal;
+  protected JPanel panelTexte;
+  protected JPanel panelBoutons;
+  protected JPanel panelMenu;
+  protected HashMap <String, HashMap<String, String>> dicoSections;
+  protected DefaultListModel<String> modelSections;
+  protected HashMap<Integer, String> dicoTexteSections;
+  protected JSONObject sections;
+  protected Fenetre principal;
+  protected ModeLecture lecture;
+
+  public ModeEdition(String texteIntroduction, JTextArea zoneTexteSection, JPanel panelPrincipal, JSONObject sections, Fenetre principal){
+    this.texteIntroduction = texteIntroduction;
+    this.zoneTexteSection = zoneTexteSection;
+    this.panelTexte = panelTexte;
+    this.panelPrincipal = panelPrincipal;
+    this.sections = sections;
+    this.principal = principal;
+    //On instancie toutes nos variables
+    panelMenu = new JPanel();
+    lecture = new ModeLecture(texteIntroduction, zoneTexteSection, panelPrincipal, sections, principal, this);
+    dicoTexteSections = new HashMap<>();
+		dicoSections = new HashMap<String, HashMap<String, String>>();
+    panelTexte = new JPanel();
+    panelBoutons = new JPanel();
+  }
+
+  public void afficherIntro(){
+    modelSections = new DefaultListModel<>();
+    /*Si notre panelPrincipal contient que deux éléments
+    on ajoute la liste des sections cela permet de ne pas avoir deux fois l'ajout dans l'afficherParagraphe*/
+		if(panelPrincipal.getComponentCount() == 2){
+			zoneTexteSection.setText(texteIntroduction);
+			zoneTexteSection.setFont(new Font("Serif", Font.PLAIN, 13));
+			panelTexte.setLayout(new BoxLayout(panelTexte, BoxLayout.PAGE_AXIS));
+			panelTexte.add(zoneTexteSection);
+		 	Commencer commencer = new Commencer(panelBoutons, sections, this, lecture, true);
+			panelBoutons.add(commencer);
+      //On ajoute au model des sections, au dictionnaire des sections et au dictionnaire des textes chaque section
+			for(int i = 1; i <= sections.size(); i++){
+				modelSections.addElement("Sections " + i);
+				HashMap<String,String> vide = new HashMap<>();
+				dicoSections.put("Sections " + i, vide);
+				String texteVide = "";
+				dicoTexteSections.put(i, texteVide);
+			}
+			JList<String> listSections = new JList<String>(modelSections);
+			listSections.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+      //On créé notre évènement pour afficher le paragraphe du noeud cliqué
+			listSections.addMouseListener(new MouseAdapter(){
+		         public void mouseClicked(MouseEvent e) {
+		            if (e.getClickCount() == 2) {
+									 int index = listSections.getSelectedIndex() + 1;
+									 Noeud noeud1 = new Noeud(sections,Integer.toString(index));
+		               afficherParagraphe(noeud1);
+		            }
+		         }
+					});
+			JScrollPane scrollPane = new JScrollPane();
+			scrollPane.setPreferredSize(new Dimension(250, (int)Math.round(Toolkit.getDefaultToolkit().getScreenSize().height*0.85)));
+			scrollPane.setViewportView(listSections);
+			listSections.setFont(new Font("Serif", Font.PLAIN, 15));
+
+			panelMenu.add(scrollPane);
+			panelPrincipal.add("West",panelMenu);
+			panelPrincipal.add("Center",panelTexte);
+			panelPrincipal.add("South",panelBoutons);
+		}else{
+      //On vide le panel des boutons pour ne pas avoir plusieurs fois les mêmes boutons d'affiché
+			panelBoutons.remove(panelBoutons.getComponent(0));
+			panelBoutons.remove(panelBoutons.getComponent(0));
+			panelBoutons.remove(panelBoutons.getComponent(0));
+			Commencer commencer = new Commencer(panelBoutons, sections, this, lecture, true);
+			panelBoutons.add(commencer);
+			panelMenu.setVisible(true);
+			panelTexte.setVisible(true);
+			panelBoutons.setVisible(true);
+			zoneTexteSection.setText(texteIntroduction);
+			zoneTexteSection.setFont(new Font("Serif", Font.PLAIN, 13));
+		}
+		panelMenu.setVisible(true);
+		panelTexte.setVisible(true);
+		panelBoutons.setVisible(true);
+	}
+
+	public void afficherParagraphe(Noeud unNoeud){
+		panelBoutons.removeAll();
+		HashMap<String,String> mapNoeud;
+    /*Si la map de noeud dans le dictionnaire des sections est vide pour cette section
+    la map des choix du noeud est remplie avec les choix créés initialement*/
+		if(dicoSections.get("Sections " + unNoeud.getNumber()).isEmpty()){
+			mapNoeud = new HashMap<>(unNoeud.choices());
+    //Sinon la map du noeud est rempli avec la map du dictionnaire des sections cela nous permet de pouvoir modifier les choix
+		}else{
+			mapNoeud = new HashMap<>(dicoSections.get("Sections " + unNoeud.getNumber()));
+		}
+		String phrase;
+    //On procède de la même manière pour le texte de la section
+		if(dicoTexteSections.get(Integer.valueOf(unNoeud.getNumber())).equals("")){
+			phrase = unNoeud.getTexte();
+			dicoTexteSections.put(Integer.valueOf(unNoeud.getNumber()), phrase);
+		}else{
+			phrase = dicoTexteSections.get(Integer.valueOf(unNoeud.getNumber()));
+		}
+		zoneTexteSection.setText(phrase);
+		List<String> myList2 = new ArrayList<>();
+    //On créé la liste des choix du noeud à l'aide de la map des choix du noeud
+		DefaultListModel<String> model = new DefaultListModel<>();
+		if(dicoSections.get("Sections " + unNoeud.getNumber()).isEmpty()){
+			for(String str : mapNoeud.keySet()){
+				model.addElement(mapNoeud.get(str));
+			}
+			dicoSections.put("Sections " + unNoeud.getNumber(), mapNoeud);
+		}else{
+			for(String str : dicoSections.get("Sections " + unNoeud.getNumber()).keySet()){
+				model.addElement(dicoSections.get("Sections " + unNoeud.getNumber()).get(str));
+			}
+		}
+		JList<String> listSections2 = new JList<String>(model);
+		listSections2.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		listSections2.addMouseListener(new MouseAdapter(){
+					 public void mouseClicked(MouseEvent e) {
+							if (e.getClickCount() == 2) {
+								 String selected = listSections2.getSelectedValue();
+								 for(Map.Entry map: mapNoeud.entrySet()){
+						 			if(map.getValue().equals(selected)){
+										String index = map.getKey().toString();
+										Noeud noeud1 = new Noeud(sections,index);
+										afficherParagraphe(noeud1);
+									}
+						 		}
+							}
+					 }
+				});
+		JScrollPane scrollPane2 = new JScrollPane();
+		scrollPane2.setViewportView(listSections2);
+		listSections2.setFont(new Font("Serif", Font.PLAIN, 15));
+		if(panelTexte.getComponentCount() == 2){
+			panelTexte.remove(panelTexte.getComponent(1));
+			panelTexte.add(scrollPane2);
+		}else{
+			panelTexte.add(scrollPane2);
+		}
+    //On ajoute nos boutons
+		Plus plus = new Plus(modelSections, dicoSections, dicoTexteSections, principal, unNoeud, mapNoeud, model, sections);
+		Moins moins = new Moins(model, mapNoeud, dicoSections, unNoeud, listSections2);
+		Sauvegarder sauvegarder = new Sauvegarder(sections, dicoTexteSections, dicoSections, mapNoeud, principal, texteIntroduction);
+		Accueil accueil = new Accueil(panelPrincipal, panelMenu, panelBoutons, panelTexte, principal);
+		ModificationTexte modificationTexte = new ModificationTexte(zoneTexteSection, unNoeud, this);
+		panelBoutons.add(accueil);
+		panelBoutons.add(plus);
+		panelBoutons.add(moins);
+		panelBoutons.add(modificationTexte);
+		panelBoutons.add(sauvegarder);
+    //On fait un repaint pour éviter le superpositionement des boutons
+		panelBoutons.repaint();
+  }
+
+  //Cette fonction permet de maintenir le dictionnaire des textes des sections a jour
+  public void majDicoTexteSections(JTextArea texte, Integer numNoeud){
+    dicoTexteSections.put(numNoeud, texte.getText());
+  }
+
+}

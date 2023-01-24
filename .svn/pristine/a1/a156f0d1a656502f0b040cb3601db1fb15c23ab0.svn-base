@@ -1,0 +1,106 @@
+package mode;
+
+import noeud.*;
+import boutons.*;
+import principal.*;
+import javax.swing.*;
+import org.json.simple.JSONObject;
+import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+import java.awt.Toolkit;
+import java.awt.*;
+
+public class ModeLecture{
+
+  protected String texteIntroduction;
+  protected JTextArea testField1;
+  protected JPanel pannelPrincipal;
+  protected JPanel pannelTexte;
+  protected JPanel pannelBoutonDebut;
+  protected JPanel pannelMenu;
+  protected HashMap <String, HashMap<String, String>> dicoSections;
+  protected DefaultListModel<String> modelSections;
+  protected HashMap<Integer, String> dicoTexteSections;
+  protected JSONObject sections;
+  protected Fenetre principal;
+  protected ModeEdition edition;
+
+  public ModeLecture(String texteIntroduction, JTextArea testField1, JPanel pannelPrincipal, JPanel pannelTexte, JPanel pannelBoutonDebut, JPanel pannelMenu, HashMap <String, HashMap<String, String>> dicoSections, HashMap<Integer, String> dicoTexteSections, JSONObject sections, Fenetre principal, ModeEdition edition){
+    this.texteIntroduction = texteIntroduction;
+    this.testField1 = testField1;
+    this.pannelPrincipal = pannelPrincipal;
+    this.pannelTexte = pannelTexte;
+    this.pannelBoutonDebut = pannelBoutonDebut;
+    this.pannelMenu = pannelMenu;
+    this.dicoSections = dicoSections;
+    this.dicoTexteSections = dicoTexteSections;
+    this.sections = sections;
+    this.principal = principal;
+    this.edition = edition;
+  }
+
+  public void afficherIntro(String intro){
+		texteIntroduction = intro;
+		testField1.setText(intro);
+		testField1.setFont(new Font("Serif", Font.PLAIN, 13));
+			//testField1.setEditable(false);
+		pannelTexte.setLayout(new BoxLayout(pannelTexte, BoxLayout.PAGE_AXIS));
+		pannelTexte.add(testField1);
+		Commencer commencer = new Commencer(pannelBoutonDebut, sections, edition, this, false);
+		pannelBoutonDebut.add(commencer);
+		pannelPrincipal.add("Center",pannelTexte);
+		pannelPrincipal.add("South",pannelBoutonDebut);
+    //pannelPrincipal.add(pannelTexte);
+    //pannelPrincipal.add(pannelBoutonDebut);
+		pannelTexte.setVisible(true);
+		pannelBoutonDebut.setVisible(true);
+	}
+
+	public void afficherParagraphe(Noeud unNoeud){
+		pannelBoutonDebut.removeAll();
+		HashMap<String,String> mapNoeud = new HashMap<>(unNoeud.choices());
+		String phrase = unNoeud.getTexte();
+		testField1.setText(phrase);
+		//testField1.setFont(new Font("Serif", Font.PLAIN, 20));
+		List<String> myList2 = new ArrayList<>();
+		//HashMap<String,String> mapNoeud = new HashMap<>(unNoeud.choices());
+		DefaultListModel<String> model = new DefaultListModel<>();
+		for(String str : mapNoeud.keySet()){
+			model.addElement(mapNoeud.get(str));
+		}
+		//JList<String> listSections2 = new JList<String>(myList2.toArray(new String[myList2.size()]));
+		JList<String> listSections2 = new JList<String>(model);
+		listSections2.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		listSections2.addMouseListener(new MouseAdapter(){
+					 public void mouseClicked(MouseEvent e) {
+							if (e.getClickCount() == 2) {
+								 String selected = listSections2.getSelectedValue();
+								 for(Map.Entry map: mapNoeud.entrySet()){
+						 			if(map.getValue().equals(selected)){
+										String index = map.getKey().toString();
+										Noeud noeud1 = new Noeud(sections,index);
+										afficherParagraphe(noeud1);
+									}
+						 		}
+							}
+					 }
+				});
+		JScrollPane scrollPane2 = new JScrollPane();
+		scrollPane2.setViewportView(listSections2);
+		listSections2.setFont(new Font("Serif", Font.PLAIN, 15));
+		System.out.println(pannelTexte.getComponentCount());
+		if(pannelTexte.getComponentCount() == 2){
+			pannelTexte.remove(pannelTexte.getComponent(1));
+			pannelTexte.add(scrollPane2);
+		}else{
+			pannelTexte.add(scrollPane2);
+		}
+		Accueil accueil = new Accueil(pannelPrincipal, pannelMenu, pannelBoutonDebut, pannelTexte, principal);
+		pannelBoutonDebut.add(accueil);
+		pannelBoutonDebut.repaint();
+  }
+
+}

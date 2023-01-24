@@ -1,0 +1,36 @@
+package boutons;
+
+import principal.*;
+import noeud.*;
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.HashMap;
+
+
+public class Moins extends JButton{
+
+  protected DefaultListModel model;
+  protected HashMap<String,String> mapNoeud;
+  protected HashMap<String, HashMap<String, String>> dicoSections;
+  protected Noeud unNoeud;
+  protected JList<String> listSections2;
+
+  public Moins(DefaultListModel model, HashMap<String,String> mapNoeud, HashMap<String, HashMap<String, String>> dicoSections, Noeud unNoeud,  JList<String> listSections2){
+    this.setText("moins");
+    this.addMouseListener(new MouseAdapter(){
+      public void mouseClicked(MouseEvent e) {
+          String removeChoice = listSections2.getSelectedValue();
+          String removeFromMap = "";
+          model.remove(listSections2.getSelectedIndex());
+          for(String str: mapNoeud.keySet()){
+           if(mapNoeud.get(str).equals(removeChoice)){
+             removeFromMap = str;
+           }
+         }
+         mapNoeud.remove(removeFromMap);
+         dicoSections.put("Sections " + unNoeud.getNumber(), mapNoeud);
+        }
+      });
+  }
+}

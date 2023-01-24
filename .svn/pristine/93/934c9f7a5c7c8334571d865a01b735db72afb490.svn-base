@@ -1,0 +1,56 @@
+package boutons;
+
+import principal.*;
+import noeud.*;
+import mode.*;
+
+import java.awt.event.*;
+import java.awt.Toolkit;
+import java.awt.*;
+
+import javax.swing.*;
+import org.json.simple.JSONObject;
+
+
+public class CreerModifierHistoire extends JButton{
+
+  protected DefaultListModel<String> modellisteHistoires;
+  protected JPanel pannelListHist;
+  protected JPanel pannelPrincipal;
+  protected JPanel pannelPremiersBouton;
+
+  protected JTextArea zoneTexte;
+
+  protected JList<String> listeHistoires;
+
+  protected JSONObject sections;
+
+  protected Fenetre principal;
+
+  public CreerModifierHistoire(DefaultListModel<String> modellisteHistoires, JPanel pannelListHist, JPanel pannelPrincipal, JPanel pannelPremiersBouton, JSONObject sections, JList<String> listeHistoires, Fenetre principal, JTextArea zoneTexte){
+    this.setText("Créer/modifier une histoire");
+    this.addMouseListener(new MouseAdapter(){
+			public void mouseClicked(MouseEvent e) {
+        zoneTexte.setEditable(true);
+				modellisteHistoires.addElement("Créer une nouvelle histoire");
+				pannelListHist.setVisible(true);
+				listeHistoires.addMouseListener(new MouseAdapter(){
+					public void mouseClicked(MouseEvent e) {
+						String selected = listeHistoires.getSelectedValue();
+						if(!selected.equals("Créer une nouvelle histoire")){
+							String chemin = "./files/" + selected;
+							ModifierChargerHistoire hist = new ModifierChargerHistoire(chemin, principal, pannelPrincipal, true);
+							pannelPremiersBouton.setVisible(false);
+							pannelPrincipal.remove(pannelPremiersBouton);
+							pannelListHist.setVisible(false);
+							pannelPrincipal.remove(pannelListHist);
+						}else{
+              JSONObject sections = new JSONObject();
+              CreerHistoire nouvelleHistoire = new CreerHistoire(principal, pannelListHist, pannelPrincipal, pannelPremiersBouton, sections);
+						}
+					}
+				});
+			}
+		});
+  }
+}

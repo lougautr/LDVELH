@@ -1,0 +1,100 @@
+package noeud;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
+import java.util.Iterator;
+
+import java.util.HashMap;
+import java.util.ArrayList;
+
+import java.lang.Integer;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+
+import java.beans.Transient;
+
+import static org.junit.Assert.*;
+
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+//import org.junit.jupiter.api.Assertions;
+
+public class NoeudTest {
+
+	protected Noeud noeud;
+	protected JSONObject sections;
+
+	@BeforeClass
+	void setupThis(){
+        System.out.println("@BeforeClass executed");
+        
+        JSONParser parser = new JSONParser();
+        try (Reader reader = new FileReader("./files/pt dej.json")) {
+
+            JSONObject jsonObject = (JSONObject) parser.parse(reader);
+            sections = (JSONObject) jsonObject.get("sections");
+            
+	}
+	
+	catch (IOException e) {
+            e.printStackTrace();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        
+        noeud = new Noeud(sections , "1");
+
+	}
+   	@Test
+    	public void testgetNumber(){
+        	assertEquals("1", noeud.getNumber());
+   	}
+	public void testgetSection(){
+		assertEquals(sections, noeud.getSection());
+	}
+	@Test
+	public void testgetTexte() {
+		assertEquals("j'ai faim", noeud.getTexte());
+	}
+
+	@Test
+	public void testgetChoice() {
+		assertEquals("[{\"section\":\"1\",\"text\":\"matin 1\"}]", noeud.getChoice().toString());
+    	}
+    	@Test
+	public void testgetChoiceTexte() {
+		assertEquals("[matin 1]", noeud.getChoiceTexte().toString());
+    	}
+    	
+    	public void testgetChoiceNumber() {
+		assertEquals("[1]", noeud.getChoiceNumber().toString());
+    	}
+    	
+    	public static void main (String[] args){
+    		NoeudTest n = new NoeudTest();
+    		n.setupThis();
+    		
+    		n.testgetNumber();
+    		
+    		n.testgetSection();
+    		
+    		n.testgetTexte();
+    		
+    		n.testgetChoice();
+    		
+    		n.testgetChoiceTexte();
+    		
+    		n.testgetChoiceNumber();
+    	}
+}

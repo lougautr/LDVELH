@@ -1,0 +1,39 @@
+package boutons;
+
+import javax.swing.*;
+import java.awt.event.*;
+import principal.*;
+import noeud.*;
+import mode.*;
+import org.json.simple.JSONObject;
+
+/*Le bouton commencer affiche la premiere section de l'histoire
+Il prend en parametre le panel des boutons, l'object sections, le mode edition et lecture et un booleen qui symbolise le choix entre editable et lecture*/
+
+public class Commencer extends JButton{
+
+protected JPanel panelBoutons;
+protected JSONObject sections;
+protected ModeEdition edition;
+protected ModeLecture lecture;
+protected boolean condition;
+
+  public Commencer(JPanel panelBoutons, JSONObject sections, ModeEdition edition, ModeLecture lecture, boolean condition){
+    this.setText("commencer l'histoire");
+    this.addMouseListener(new MouseAdapter(){
+      public void mouseClicked(MouseEvent e) {
+        if (e.getClickCount() == 1) {
+          Noeud noeud1 = new Noeud(sections,"1");
+          //On enleve au panel bouton le bouton commencer
+          panelBoutons.remove(panelBoutons.getComponent(0));
+          //Suivant notre condition on lance le mode edition ou lecutre
+          if(condition)
+            edition.afficherParagraphe(noeud1);
+          else
+            lecture.afficherParagraphe(noeud1);
+        }
+      }
+    });
+  }
+
+}

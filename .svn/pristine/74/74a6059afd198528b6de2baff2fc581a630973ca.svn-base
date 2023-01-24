@@ -1,0 +1,28 @@
+package boutons;
+
+import principal.*;
+import noeud.*;
+import mode.*;
+import javax.swing.*;
+import java.awt.event.*;
+
+/*Le bouton modification texte permet de mettre a jour le dictionnaire qui contient les textes des sections
+Il prend en parametre la zone du texte de la section, un noeud et le mode edition*/
+
+public class ModificationTexte extends JButton{
+
+  protected JTextArea zoneTexteSection;
+  protected Noeud unNoeud;
+  protected ModeEdition edition;
+
+  public ModificationTexte(JTextArea zoneTexteSection, Noeud unNoeud, ModeEdition edition){
+    this.setText("modification texte");
+    this.addMouseListener(new MouseAdapter(){
+    public void mouseClicked(MouseEvent e) {
+      //On appel la majDicoTexteSections de edition pour mettre a jour le dictionnaire
+      edition.majDicoTexteSections(zoneTexteSection, Integer.valueOf(unNoeud.getNumber()));
+      }
+    });
+  }
+
+}

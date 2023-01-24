@@ -1,0 +1,119 @@
+package demo;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.ArrayList;
+import java.util.List;
+import org.json.simple.JSONObject;
+import java.awt.Toolkit;
+
+public class Fenetre{
+	private JFrame f;
+	private JPanel pannelPrincipal;
+	private JPanel pannelTexte;
+	private JTextArea testField1;
+	private JTextArea testField2;
+	private JSONObject sections;
+	private MouseAdapter clickText;
+	public Fenetre(JSONObject sections){
+		this.sections = sections;
+		f = new JFrame("ldvelh-lap");
+		pannelPrincipal = new JPanel();
+		pannelTexte = new JPanel();
+		testField1 = new JTextArea();
+		testField2 = new JTextArea();
+	}
+
+	public void afficherFenetre(String intro){
+		//récuperer la dimension de l'écran
+		Dimension tailleMoniteur = Toolkit.getDefaultToolkit().getScreenSize();
+		int longueur = tailleMoniteur.width;
+		int hauteur = tailleMoniteur.height;
+//régler la taille de JFrame à 2/3 la taille de l'écran
+		f.setSize(longueur, hauteur);
+		//f.setSize(1500,1500);
+		pannelPrincipal.setLayout(new BorderLayout(20,0));
+
+		testField1.setText(intro);
+		testField1.setFont(new Font("Serif", Font.PLAIN, 13));
+		//testField1.setEditable(false);
+
+		testField2.setText("Cliquez ici pour commencer l'histoire");
+
+		pannelTexte.setLayout(new BoxLayout(pannelTexte, BoxLayout.PAGE_AXIS));
+		pannelTexte.add(testField1);
+
+		gestionEvent(true);
+		pannelTexte.add(testField2);
+
+		JPanel pannelMenu = new JPanel();
+
+		List<String> myList = new ArrayList<>();
+		for(int i = 1; i < 351; i++){
+			myList.add("Sections " + i);
+		}
+
+		Noeud noeudTest = new Noeud(this.sections, "1");
+		JList<String> listSections = new JList<String>(myList.toArray(new String[myList.size()]));
+		listSections.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		listSections.addMouseListener(new MouseAdapter(){
+	         public void mouseClicked(MouseEvent e) {
+	            if (e.getClickCount() == 2) {
+								 int index = listSections.getSelectedIndex() + 1;
+								 Noeud noeud1 = new Noeud(sections,Integer.toString(index));
+	               afficherParagraphe(noeud1);
+	            }
+	         }
+				});
+		JScrollPane scrollPane = new JScrollPane();
+		double hauteur10 = hauteur*0.85;
+		scrollPane.setPreferredSize(new Dimension(250, (int)hauteur10));
+		scrollPane.setViewportView(listSections);
+		listSections.setFont(new Font("Serif", Font.PLAIN, 15));
+
+		pannelMenu.add(scrollPane);
+		pannelPrincipal.add("West",pannelMenu);
+		pannelPrincipal.add("Center",pannelTexte);
+
+		f.getContentPane().add(pannelPrincipal);
+		f.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
+		f.setVisible(true);
+	}
+
+	public void gestionEvent(boolean yes){
+		if(yes){
+			testField2.addMouseListener(clickText);
+		}
+		else{
+			System.out.println("aa");
+			testField2.removeMouseListener(clickText);
+		}
+	}
+
+	public void afficherParagraphe(Noeud unNoeud){
+		pannelTexte.remove(testField2);
+		String phrase = unNoeud.getTexte();
+		testField1.setText(phrase);
+		//testField1.setFont(new Font("Serif", Font.PLAIN, 20));
+		List<String> myList2 = new ArrayList<>();
+		for(int i = 0; i < unNoeud.getChoiceTexte().size(); i++){
+			myList2.add(unNoeud.getChoiceTexte().get(i));
+		}
+		JList<String> listSections2 = new JList<String>(myList2.toArray(new String[myList2.size()]));
+		listSections2.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+		listSections2.addMouseListener(new MouseAdapter(){
+					 public void mouseClicked(MouseEvent e) {
+							if (e.getClickCount() == 2) {
+								 int index = listSections2.getSelectedIndex() + 1;
+								 Noeud noeud1 = new Noeud(sections,Integer.toString(index));
+								 afficherParagraphe(noeud1);
+							}
+					 }
+				});
+		JScrollPane scrollPane2 = new JScrollPane();
+		scrollPane2.setViewportView(listSections2);
+		listSections2.setFont(new Font("Serif", Font.PLAIN, 15));
+		pannelTexte.add(scrollPane2);
+  }
+}

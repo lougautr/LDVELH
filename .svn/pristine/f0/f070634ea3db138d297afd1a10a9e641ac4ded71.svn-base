@@ -1,0 +1,67 @@
+package demo;
+
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
+import java.util.Iterator;
+
+import java.util.HashMap;
+import java.util.ArrayList;
+
+import java.lang.Integer;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.*;
+
+import java.beans.Transient;
+
+import static org.junit.Assert.*;
+
+import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+
+import demo.Noeud;
+
+public class NoeudTest {
+
+	protected Noeud noeud;
+	protected JSONObject section;
+
+	@BeforeClass
+	void setupThis(){
+        System.out.println("@BeforeClass executed");
+        this.section = new JSONObject();
+        this.noeud = new Noeud(section , "1");
+	
+	}
+   	@Test
+    	public void testgetNumber(){
+        Assertions.assertEquals("Test sur le numero", noeud.getNumber());
+   	}
+	public void testgetSection(){
+	Assertions.assertEquals("Test sur la section", noeud.getSection());
+	}
+	@Test
+	public void testgetTexte() {
+	Assertions.assertEquals("truc", noeud.getTexte());
+	}
+
+	@Test
+	public void testgetChoice() {
+	Assertions.assertEquals("Test sur le choix", noeud.getChoice());
+    	}
+    	/*@Test
+	public void testchoices() {
+	Assertions.assertEquals("Test sur le choix", noeud.choices());
+    	}*/
+}

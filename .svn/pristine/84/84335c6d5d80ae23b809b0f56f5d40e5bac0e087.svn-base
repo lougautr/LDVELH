@@ -1,0 +1,70 @@
+package demo;
+
+import  org.json.simple.*;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Reader;
+import java.util.Iterator;
+
+import java.util.HashMap;
+import java.util.ArrayList;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.lang.Process;
+
+public class Test {
+
+    public static void main(String[] args) {
+
+        JSONParser parser = new JSONParser();
+
+
+        try (Reader reader = new FileReader("./files/fotw.json")) {
+
+            JSONObject jsonObject = (JSONObject) parser.parse(reader);
+            JSONObject sections = (JSONObject) jsonObject.get("sections");
+            JSONObject un = (JSONObject) sections.get("1");
+            JSONArray choices = (JSONArray) un.get("choices");
+            JSONObject an = (JSONObject) choices.get(0);
+            JSONArray intro = (JSONArray) jsonObject.get("intro_sequence");
+
+            //System.out.println(an.get("text"));
+
+            /*File output = new File("output.dot");
+      			FileWriter writer = new FileWriter(output);
+
+      			Noeud n = new Noeud(sections, "1");
+      			ArrayList<String> listeChoix = new ArrayList<>();
+      			listeChoix = n.getChoiceNumber();
+
+      			writer.write(n.toDot2());
+      			writer.flush();
+      			writer.close();
+
+      			Runtime rt = Runtime.getRuntime();
+      			Process pr = rt.exec("dot -Tjpg -o output.jpg output.dot");
+
+      			int exitCode = pr.waitFor();
+      			System.out.println(exitCode);*/
+      			Fenetre app = new Fenetre();
+				String texteIntro = "";
+				for(int i = 0; i < intro.size(); i++){
+        			texteIntro += intro.get(i) + "\n";
+        		}
+				app.afficherFenetre(texteIntro);
+        }
+
+        catch (IOException e) {
+          e.printStackTrace();
+        }
+        catch (Exception e) {
+          e.printStackTrace();
+        }
+    }
+}
